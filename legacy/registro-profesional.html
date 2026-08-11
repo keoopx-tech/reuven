@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuenta profesional · Reuven</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --navy: #1e3a5f;
+    --teal: #c8202d;
+    --teal-dark: #9b1a23;
+    --green-soft: #f0fdf4;
+    --green-border: #86efac;
+    --green-dark: #16a34a;
+    --green: #22c55e;
+    --blue: #3b82f6;
+    --blue-soft: #dbeafe;
+    --error: #ef4444;
+    --text: #1f2937;
+    --text-soft: #6b7280;
+    --border-soft: #e5e7eb;
+  }
+  body {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(245, 243, 238, 0.92);
+    backdrop-filter: saturate(150%) blur(8px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    padding: 14px 22px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--navy);
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.3rem;
+  }
+  .brand-logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800;
+  }
+  .nav-links { display: flex; gap: 6px; }
+  .nav-link {
+    color: var(--text-soft); text-decoration: none;
+    font-weight: 600; font-size: 0.95rem;
+    padding: 8px 14px; border-radius: 10px;
+  }
+  .nav-link:hover { color: var(--navy); background: var(--green-soft); }
+
+  .page { max-width: 920px; margin: 0 auto; padding: 50px 22px 80px; }
+  .page-head { text-align: center; margin-bottom: 36px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--blue-soft); border: 1px solid #93c5fd;
+    color: #1d4ed8; padding: 6px 14px;
+    border-radius: 100px; font-weight: 700; font-size: 0.85rem;
+    margin-bottom: 14px;
+  }
+  .page-head h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(1.8rem, 4.5vw, 2.8rem);
+    font-weight: 900; letter-spacing: -0.02em;
+    color: var(--navy);
+    margin-bottom: 10px;
+  }
+  .page-head p { color: var(--text-soft); max-width: 600px; margin: 0 auto; }
+
+  .info-card {
+    background: linear-gradient(135deg, var(--blue-soft) 0%, #eff6ff 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: 18px;
+    padding: 18px 22px;
+    margin-bottom: 22px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .info-card .ico { font-size: 1.4rem; flex-shrink: 0; }
+  .info-card .txt {
+    color: #1e3a8a;
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+  .info-card .txt strong { color: #1e3a8a; }
+
+  form { display: flex; flex-direction: column; gap: 18px; }
+  fieldset {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 22px;
+    padding: 28px 28px;
+  }
+  legend {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800; color: var(--navy);
+    font-size: 1.15rem; padding: 0 10px;
+    background: var(--surface); border-radius: 8px;
+  }
+  legend .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: white;
+    font-size: 0.85rem; font-weight: 800;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 14px;
+  }
+  .grid .full { grid-column: 1 / -1; }
+
+  .field { display: flex; flex-direction: column; }
+  .field label {
+    font-weight: 600; font-size: 0.9rem;
+    color: var(--navy); margin-bottom: 6px;
+  }
+  .field label .req { color: var(--error); }
+  .field input[type="text"],
+  .field input[type="email"],
+  .field input[type="tel"],
+  .field select {
+    padding: 12px 14px;
+    border: 1.5px solid var(--border-soft);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--text);
+    background: var(--bg);
+    transition: all 0.15s;
+  }
+  .field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--teal);
+    background: var(--surface);
+    box-shadow: 0 0 0 3px rgba(200, 32, 45, 0.12);
+  }
+  .field .help { font-size: 0.82rem; color: var(--text-soft); margin-top: 6px; }
+
+  .code-input {
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace !important;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .consent { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+  .consent-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--bg);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .consent-item:hover { border-color: var(--teal); }
+  .consent-item:has(input:checked) {
+    background: var(--green-soft);
+    border-color: var(--green-border);
+  }
+  .consent-item input {
+    margin-top: 3px;
+    width: 18px; height: 18px;
+    accent-color: var(--green-dark);
+    flex-shrink: 0;
+  }
+  .consent-item .ctxt { color: var(--text); font-size: 0.94rem; }
+  .consent-item .ctxt .req { color: var(--error); margin-left: 3px; }
+  .consent-item .ctxt small {
+    display: block;
+    color: var(--text-soft);
+    font-size: 0.83rem;
+    margin-top: 2px;
+  }
+  .consent-item .ctxt a { color: var(--teal-dark); font-weight: 600; }
+
+  .actions {
+    display: flex; gap: 12px; justify-content: flex-end;
+    flex-wrap: wrap; padding: 12px 0;
+  }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: none; cursor: pointer;
+    font-family: inherit; font-weight: 700; text-decoration: none;
+    border-radius: 14px; padding: 13px 26px;
+    transition: all 0.2s; font-size: 1rem;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    color: white;
+    box-shadow: 0 4px 14px rgba(200, 32, 45, 0.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--navy);
+    border: 1.5px solid var(--border-soft);
+  }
+  .btn-secondary:hover { border-color: var(--navy); }
+
+  .success-banner {
+    display: none;
+    background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+    color: white;
+    border-radius: 18px;
+    padding: 24px 28px;
+    margin-bottom: 18px;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+    animation: slideIn 0.4s ease;
+  }
+  .success-banner.show { display: flex; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .success-banner .check {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: white;
+    color: var(--green-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; font-weight: 900;
+    flex-shrink: 0;
+  }
+  .success-banner h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.2rem; font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .success-banner p { opacity: 0.9; font-size: 0.95rem; margin: 0; }
+
+  footer {
+    border-top: 1px solid var(--border-soft);
+    padding: 28px 22px;
+    text-align: center;
+    color: var(--text-soft);
+    font-size: 0.88rem;
+  }
+
+  @media (max-width: 640px) {
+    fieldset { padding: 22px 18px; }
+    .grid { grid-template-columns: 1fr; }
+    .actions { justify-content: stretch; }
+    .actions .btn { flex: 1; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="landing.html" class="brand">
+      <span class="brand-logo" style="font-size:0.92rem;letter-spacing:-0.02em;width:40px;height:34px">RF</span>
+      <span style="display:flex;flex-direction:column;line-height:1.05;gap:1px"><span>Reuven</span><span style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal)">Enseñamos a Pensar</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="landing.html" class="nav-link">← Volver al inicio</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="page-head">
+    <span class="pill">🎓 Cuenta profesional</span>
+    <h1>Cuenta para profesionales</h1>
+    <p>Para docentes, psicólogos/as, neurolingüistas y logopedas que acompañen el aprendizaje de un menor.</p>
+  </div>
+
+  <div class="info-card">
+    <div class="ico">ℹ️</div>
+    <div class="txt">
+      <strong>Importante:</strong> el acceso a los datos del menor requiere siempre la autorización explícita del tutor/a legal. El tutor/a genera un código de vinculación desde su cuenta y te lo entrega.
+    </div>
+  </div>
+
+  <div class="success-banner" id="success" role="alert" aria-live="polite">
+    <div class="check">✓</div>
+    <div>
+      <h3>Cuenta profesional creada</h3>
+      <p>Te llevamos a tu panel para ver el progreso de los menores vinculados…</p>
+    </div>
+  </div>
+
+  <form id="form" novalidate>
+    <fieldset>
+      <legend><span class="num">1</span>Datos profesionales</legend>
+      <div class="grid">
+        <div class="field">
+          <label for="proName">Nombre completo <span class="req">*</span></label>
+          <input type="text" id="proName" name="proName" required autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="proEmail">Email profesional <span class="req">*</span></label>
+          <input type="email" id="proEmail" name="proEmail" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="proPhone">Teléfono</label>
+          <input type="tel" id="proPhone" name="proPhone" autocomplete="tel">
+        </div>
+        <div class="field">
+          <label for="proRole">Profesión <span class="req">*</span></label>
+          <select id="proRole" name="proRole" required>
+            <option value="">— Selecciona —</option>
+            <option value="docente">👩‍🏫 Docente</option>
+            <option value="psicologo">🧠 Psicólogo/a</option>
+            <option value="neurolinguista">🗣️ Neurolingüista</option>
+            <option value="logopeda">👂 Logopeda</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="proCenter">Centro o institución <span class="req">*</span></label>
+          <input type="text" id="proCenter" name="proCenter" required placeholder="Ej. CEIP Cervantes, consulta privada…">
+        </div>
+        <div class="field">
+          <label for="proLicense">Nº de colegiado/a</label>
+          <input type="text" id="proLicense" name="proLicense">
+          <span class="help">Si tu profesión lo requiere.</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="num">2</span>Vinculación con un menor</legend>
+      <div class="grid">
+        <div class="field full">
+          <label for="linkCode">Código de vinculación</label>
+          <input type="text" id="linkCode" name="linkCode" class="code-input" placeholder="XXXX-XXXX" maxlength="9">
+          <span class="help">Pídele este código al tutor/a del menor desde su cuenta de familia. Puedes dejarlo vacío y vincularte después.</span>
+        </div>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="num">3</span>Consentimientos</legend>
+      <div class="consent">
+        <label class="consent-item">
+          <input type="checkbox" name="c1" required>
+          <span class="ctxt">
+            <strong>Confirmo que el/la tutor/a legal del menor me ha autorizado</strong> expresamente a acceder a sus resultados.<span class="req">*</span>
+            <small>Si no tienes aún esa autorización, primero solicítala al tutor antes de vincular el menor a tu cuenta.</small>
+          </span>
+        </label>
+        <label class="consent-item">
+          <input type="checkbox" name="c2" required>
+          <span class="ctxt">
+            <strong>Me comprometo a tratar los datos del menor con confidencialidad</strong> y solo para fines clínicos o educativos.<span class="req">*</span>
+            <small>Está prohibido compartir, revender o usar estos datos para cualquier otro fin.</small>
+          </span>
+        </label>
+        <label class="consent-item">
+          <input type="checkbox" name="c3" required>
+          <span class="ctxt">
+            <strong>Autorizo el tratamiento de mis datos personales</strong> conforme a la <a href="#">política de privacidad</a> y acepto los <a href="#">términos de uso profesional</a>.<span class="req">*</span>
+          </span>
+        </label>
+        <label class="consent-item">
+          <input type="checkbox" name="c4">
+          <span class="ctxt">
+            <strong>Acepto recibir comunicaciones</strong> sobre actualizaciones del producto y recursos para profesionales (opcional).
+          </span>
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="actions">
+      <a href="landing.html" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary">Crear cuenta profesional →</button>
+    </div>
+  </form>
+</div>
+
+<footer>
+  © 2026 Reuven · <a href="landing.html" style="color: inherit;">Inicio</a> · <a href="guia-adulto.html" style="color: inherit;">Para familias</a> · <a href="#" style="color: inherit;">Política de privacidad</a>
+</footer>
+
+<script src="assets/js/metrics.js"></script>
+<script src="assets/js/auth.js"></script>
+<script>
+  const form = document.getElementById('form');
+  const success = document.getElementById('success');
+  const codeInput = document.getElementById('linkCode');
+
+  codeInput.addEventListener('input', (e) => {
+    let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (v.length > 4) v = v.slice(0, 4) + '-' + v.slice(4, 8);
+    e.target.value = v;
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const pro = window.ReuvenAuth.addProfesional({
+      nombre:    form.proName.value.trim(),
+      email:     form.proEmail.value.trim(),
+      telefono:  form.proPhone.value.trim(),
+      profesion: form.proRole.value,
+      centro:    form.proCenter.value.trim(),
+      colegiado: form.proLicense.value.trim(),
+    });
+
+    let vincMsg = '';
+    const code = (form.linkCode.value || '').trim();
+    if (code) {
+      const r = window.ReuvenAuth.vincularPorCodigo(pro.id, code);
+      if (r.ok) {
+        vincMsg = ' Menor vinculado correctamente.';
+      } else {
+        vincMsg = ' (Aviso: ' + r.error + ' Puedes vincular más tarde desde el panel.)';
+      }
+    }
+
+    success.querySelector('p').textContent = 'Te llevamos a tu panel.' + vincMsg;
+    success.classList.add('show');
+    success.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    form.querySelector('button[type="submit"]').disabled = true;
+    setTimeout(() => { window.location.href = 'dashboard-profesional.html'; }, 2000);
+  });
+</script>
+
+</body>
+</html>

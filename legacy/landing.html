@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reuven · Aprender a leer también puede ser un juego</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --navy: #1e3a5f;
+    --navy-soft: #334d70;
+    --teal: #c8202d;
+    --teal-dark: #9b1a23;
+    --green: #22c55e;
+    --green-dark: #16a34a;
+    --green-soft: #f0fdf4;
+    --green-border: #86efac;
+    --yellow: #fbbf24;
+    --pink: #ec4899;
+    --orange: #f97316;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --text: #1f2937;
+    --text-soft: #6b7280;
+    --border-soft: #e5e7eb;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Fredoka', -apple-system, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.55;
+  }
+
+  /* ==== NAV ==== */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(245, 243, 238, 0.92);
+    backdrop-filter: saturate(150%) blur(8px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--navy);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+  }
+  .brand-logo {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--teal) 0%, var(--navy) 100%);
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-weight: 800;
+    font-size: 1.1rem;
+    box-shadow: 0 3px 8px rgba(200, 32, 45, 0.3);
+  }
+  .nav-links {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .nav-link {
+    color: var(--text-soft);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 8px 14px;
+    border-radius: 10px;
+    transition: all 0.15s;
+  }
+  .nav-link:hover { color: var(--navy); background: var(--green-soft); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 14px;
+    padding: 11px 22px;
+    transition: all 0.2s;
+    font-size: 1rem;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--navy) 100%);
+    color: white;
+    box-shadow: 0 4px 14px rgba(200, 32, 45, 0.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(200, 32, 45, 0.45); }
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--navy);
+    border: 1.5px solid var(--border-soft);
+  }
+  .btn-secondary:hover { border-color: var(--navy); }
+  .btn-lg { padding: 16px 32px; font-size: 1.1rem; border-radius: 16px; }
+
+  /* ==== HERO ==== */
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 22px 80px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .hero-text .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--green-soft);
+    border: 1px solid var(--green-border);
+    color: var(--green-dark);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  .hero-text h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--navy);
+    letter-spacing: -0.025em;
+    margin-bottom: 18px;
+  }
+  .hero-text h1 .accent {
+    background: linear-gradient(120deg, var(--teal) 0%, var(--pink) 60%, var(--yellow) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-text p {
+    font-size: clamp(1rem, 1.6vw, 1.18rem);
+    color: var(--text-soft);
+    margin-bottom: 28px;
+    max-width: 540px;
+  }
+  .hero-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  .hero-meta span::before {
+    content: '✓';
+    display: inline-block;
+    margin-right: 6px;
+    color: var(--green-dark);
+    font-weight: 800;
+  }
+
+  .hero-art {
+    position: relative;
+    height: 460px;
+  }
+  .hero-art .blob {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 30% 30%, #fce7f3 0%, transparent 55%),
+      radial-gradient(circle at 75% 60%, #dbeafe 0%, transparent 55%),
+      radial-gradient(circle at 50% 90%, #fef3c7 0%, transparent 50%);
+    border-radius: 40px;
+  }
+  .hero-art .float {
+    position: absolute;
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 18px;
+    box-shadow: 0 20px 50px rgba(30, 58, 95, 0.12);
+    border: 1px solid var(--border-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+    animation: floaty 6s ease-in-out infinite;
+  }
+  .hero-art .float:hover { transform: scale(1.05) rotate(-2deg); }
+  .hero-art .float img { width: 100%; height: 100%; object-fit: contain; }
+  .float-1 { top: 8%; left: 6%; width: 150px; height: 150px; animation-delay: 0s; }
+  .float-2 { top: 20%; right: 10%; width: 130px; height: 130px; animation-delay: -1.5s; transform: rotate(6deg); }
+  .float-3 { bottom: 12%; left: 18%; width: 160px; height: 160px; animation-delay: -3s; transform: rotate(-5deg); }
+  .float-4 { bottom: 18%; right: 8%; width: 120px; height: 120px; animation-delay: -4.5s; }
+  @keyframes floaty {
+    0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); }
+    50% { transform: translateY(-12px) rotate(var(--r, 0deg)); }
+  }
+  .float-2 { --r: 6deg; }
+  .float-3 { --r: -5deg; }
+
+  /* ==== SECTIONS ==== */
+  section { padding: 70px 22px; }
+  .section-inner { max-width: 1200px; margin: 0 auto; }
+  .section-head {
+    text-align: center;
+    margin-bottom: 46px;
+  }
+  .section-eyebrow {
+    display: inline-block;
+    color: var(--teal-dark);
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(1.7rem, 3.6vw, 2.6rem);
+    font-weight: 800;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .section-sub {
+    color: var(--text-soft);
+    font-size: 1.05rem;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  /* ==== HOW IT WORKS ==== */
+  .how {
+    background: var(--surface);
+    border-top: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .how-card {
+    background: var(--bg);
+    border-radius: 22px;
+    padding: 28px 24px;
+    border: 1px solid var(--border-soft);
+    position: relative;
+  }
+  .how-card .num {
+    position: absolute;
+    top: -16px;
+    left: 24px;
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1.2rem;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 14px rgba(30, 58, 95, 0.25);
+  }
+  .how-card h3 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy);
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin: 8px 0 8px;
+  }
+  .how-card .dot {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .how-card p { color: var(--text-soft); font-size: 0.97rem; }
+
+  /* ==== AUDIENCE ==== */
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
+  }
+  .audience-card {
+    background: var(--surface);
+    border-radius: 22px;
+    padding: 32px 26px;
+    border: 1px solid var(--border-soft);
+    transition: all 0.25s;
+    display: flex;
+    flex-direction: column;
+  }
+  .audience-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 14px 36px rgba(30, 58, 95, 0.1);
+    border-color: var(--green-border);
+  }
+  .audience-card .icon {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.9rem;
+    margin-bottom: 18px;
+  }
+  .audience-card.kids .icon { background: linear-gradient(135deg, #fef3c7, var(--yellow)); }
+  .audience-card.family .icon { background: linear-gradient(135deg, #fce7f3, var(--pink)); }
+  .audience-card.pro .icon { background: linear-gradient(135deg, #dbeafe, var(--blue)); }
+  .audience-card h3 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy);
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .audience-card p {
+    color: var(--text-soft);
+    margin-bottom: 22px;
+    flex: 1;
+  }
+
+  /* ==== ACTIVITIES ==== */
+  .activities { background: var(--surface); border-top: 1px solid var(--border-soft); }
+  .act-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+  }
+  .act-card {
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    padding: 22px 16px;
+    text-align: center;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .act-card:hover {
+    border-color: var(--teal);
+    background: var(--green-soft);
+    transform: translateY(-2px);
+  }
+  .act-card .act-icon { font-size: 2rem; }
+  .act-card .act-num {
+    font-family: 'Nunito', sans-serif;
+    color: var(--teal-dark);
+    font-weight: 900;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  .act-card .act-name {
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 0.98rem;
+  }
+
+  /* ==== CTA STRIP ==== */
+  .cta-strip {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--teal-dark) 100%);
+    color: white;
+    border-radius: 28px;
+    padding: 50px 36px;
+    text-align: center;
+    margin: 40px auto;
+    max-width: 1100px;
+    box-shadow: 0 20px 50px rgba(30, 58, 95, 0.25);
+  }
+  .cta-strip h2 {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .cta-strip p { opacity: 0.85; margin-bottom: 26px; max-width: 600px; margin-left: auto; margin-right: auto; }
+  .cta-strip .btn-primary {
+    background: white;
+    color: var(--navy);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+  }
+  .cta-strip .btn-primary:hover { background: var(--yellow); }
+
+  /* ==== ACCESO ==== */
+  .acceso { background: var(--surface); border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft); }
+  .acceso-status {
+    background: var(--green-soft);
+    border: 1px solid var(--green-border);
+    border-radius: 14px;
+    padding: 10px 16px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.92rem;
+    color: var(--green-dark);
+    flex-wrap: wrap;
+  }
+  .acceso-status strong { color: var(--navy); }
+  .acceso-status .logout {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--green-border);
+    color: var(--green-dark);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.82rem;
+  }
+  .acceso-status .logout:hover { background: var(--green); color: white; border-color: var(--green-dark); }
+
+  .acceso-empty {
+    background: var(--bg);
+    border: 2px dashed var(--border-soft);
+    border-radius: 22px;
+    padding: 40px 22px;
+    text-align: center;
+    color: var(--text-soft);
+  }
+  .acceso-empty .ico { font-size: 3rem; margin-bottom: 12px; }
+  .acceso-empty h3 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy);
+    font-size: 1.3rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .acceso-empty p { margin-bottom: 18px; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+  .acceso-tabs {
+    display: flex;
+    gap: 6px;
+    border-bottom: 1px solid var(--border-soft);
+    margin-bottom: 22px;
+    flex-wrap: wrap;
+  }
+  .acceso-tab {
+    background: transparent;
+    border: none;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    color: var(--text-soft);
+    border-radius: 10px 10px 0 0;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    font-size: 0.95rem;
+    transition: all 0.15s;
+  }
+  .acceso-tab:hover { color: var(--navy); }
+  .acceso-tab.active {
+    color: var(--navy);
+    border-bottom-color: var(--teal);
+    background: var(--bg);
+  }
+
+  .acceso-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .user-card {
+    background: var(--bg);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 18px;
+    padding: 18px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: all 0.2s;
+  }
+  .user-card:hover {
+    border-color: var(--teal);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(30,58,95,0.08);
+  }
+  .user-card.activa {
+    background: var(--green-soft);
+    border-color: var(--green-border);
+  }
+  .user-head {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .user-avatar {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    color: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+  }
+  .user-avatar.fa { background: linear-gradient(135deg, #ec4899, #be185d); }
+  .user-avatar.pa { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+  .user-info { min-width: 0; flex: 1; }
+  .user-info .nm {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy);
+    font-weight: 800;
+    font-size: 1.02rem;
+    line-height: 1.2;
+    margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .user-info .em {
+    color: var(--text-soft);
+    font-size: 0.82rem;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .user-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .user-meta .chip {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 100px;
+    padding: 3px 10px;
+    font-size: 0.78rem;
+    color: var(--text-soft);
+    font-weight: 600;
+  }
+  .user-meta .chip strong { color: var(--navy); }
+  .user-card .enter-btn {
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    border-radius: 12px;
+    padding: 10px 16px;
+    transition: all 0.2s;
+    font-size: 0.92rem;
+    width: 100%;
+  }
+  .user-card .enter-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(200,32,45,0.3); }
+  .user-card.activa .enter-btn {
+    background: var(--green);
+  }
+
+  .acceso-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .acceso-actions .btn-secondary { font-size: 0.92rem; padding: 9px 18px; }
+  .acceso-reset {
+    background: transparent;
+    color: var(--red);
+    border: 1.5px solid var(--border-soft);
+  }
+  .acceso-reset:hover { border-color: var(--red); background: #fef2f2; }
+
+  /* ==== FOOTER ==== */
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border-soft);
+    padding: 40px 22px 24px;
+  }
+  .foot-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .foot-cols {
+    display: grid;
+    grid-template-columns: 1.5fr repeat(3, 1fr);
+    gap: 30px;
+    margin-bottom: 30px;
+  }
+  .foot-col h4 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy);
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    font-weight: 800;
+  }
+  .foot-col a {
+    display: block;
+    color: var(--text-soft);
+    text-decoration: none;
+    font-size: 0.92rem;
+    padding: 4px 0;
+    transition: color 0.15s;
+  }
+  .foot-col a:hover { color: var(--teal-dark); }
+  .foot-about p {
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    max-width: 320px;
+  }
+  .foot-notice {
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 12px 18px;
+    color: var(--text-soft);
+    font-size: 0.88rem;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .foot-bottom {
+    border-top: 1px solid var(--border-soft);
+    padding-top: 20px;
+    color: var(--text-soft);
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  /* ==== RESPONSIVE ==== */
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 40px 22px 50px;
+    }
+    .hero-art { height: 360px; }
+    .float-1 { width: 120px; height: 120px; }
+    .float-2 { width: 100px; height: 100px; }
+    .float-3 { width: 130px; height: 130px; }
+    .float-4 { width: 95px; height: 95px; }
+    .foot-cols { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 540px) {
+    .nav-link.hide-sm { display: none; }
+    .foot-cols { grid-template-columns: 1fr; }
+    section { padding: 50px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="landing.html" class="brand">
+      <span class="brand-logo" style="font-size:0.92rem;letter-spacing:-0.02em;width:40px;height:36px">RF</span>
+      <span style="display:flex;flex-direction:column;line-height:1.05;gap:1px"><span>Reuven</span><span style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal)">Enseñamos a Pensar</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="#como-funciona" class="nav-link hide-sm">Cómo funciona</a>
+      <a href="guia-adulto.html" class="nav-link hide-sm">Para familias</a>
+      <a href="login-adultos.html" class="nav-link hide-sm">🔐 Acceso adulto</a>
+      <a href="registro-profesional.html" class="nav-link hide-sm">Para profesionales</a>
+      <a href="#acceso" class="nav-link hide-sm">⚡ Demo</a>
+      <a href="login-ninos.html" class="btn btn-primary">Empezar</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-text">
+    <span class="pill">🌱 Diseñado con familias y especialistas</span>
+    <h1>Aprender a leer también puede ser <span class="accent">un juego</span>.</h1>
+    <p>Reuven es una plataforma de lectoescritura para niños y niñas en español. Ocho actividades guiadas con voz, sonido y celebraciones para que cada acierto se sienta como una victoria.</p>
+    <div class="hero-ctas">
+      <a href="login-ninos.html" class="btn btn-primary btn-lg">🎮 Empezar a jugar</a>
+      <a href="guia-adulto.html" class="btn btn-secondary btn-lg">Soy adulto/familia</a>
+    </div>
+    <div class="hero-meta">
+      <span>Sin descargas</span>
+      <span>Funciona en cualquier dispositivo</span>
+      <span>En español</span>
+    </div>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="blob"></div>
+    <div class="float float-1"><img src="assets/elefante.png" alt=""></div>
+    <div class="float float-2"><img src="assets/sol.png" alt=""></div>
+    <div class="float float-3"><img src="assets/oveja.png" alt=""></div>
+    <div class="float float-4"><img src="assets/avion.png" alt=""></div>
+  </div>
+</header>
+
+<section id="como-funciona" class="how">
+  <div class="section-inner">
+    <div class="section-head">
+      <span class="section-eyebrow">Cómo funciona</span>
+      <h2 class="section-title">Tres ideas que guían cada sesión</h2>
+      <p class="section-sub">Adaptado para que niños y niñas avancen a su ritmo, con un acompañamiento claro para los adultos.</p>
+    </div>
+    <div class="how-grid">
+      <article class="how-card">
+        <span class="num">1</span>
+        <h3><span class="dot" style="background: var(--green-dark)"></span>Aprenden jugando</h3>
+        <p>Vocales, sílabas, palabras y sonidos. Cada actividad combina audio, dibujo e interacción para que la lectura se construya con todos los sentidos.</p>
+      </article>
+      <article class="how-card">
+        <span class="num">2</span>
+        <h3><span class="dot" style="background: var(--yellow)"></span>Eligen su personaje</h3>
+        <p>Cada niño tiene su propio perfil con su nombre y avatar. La app se adapta a su progreso y le devuelve celebraciones cuando lo merece.</p>
+      </article>
+      <article class="how-card">
+        <span class="num">3</span>
+        <h3><span class="dot" style="background: var(--pink)"></span>Tú estás al mando</h3>
+        <p>Las familias y profesionales tienen su propio espacio para ver cómo va el menor, qué le cuesta, qué le motiva. Control parental incluido.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="audiencia">
+  <div class="section-inner">
+    <div class="section-head">
+      <span class="section-eyebrow">Para quién</span>
+      <h2 class="section-title">Una entrada distinta según quién eres</h2>
+      <p class="section-sub">Reuven separa los espacios de los niños, las familias y los profesionales. Cada uno entra por su puerta.</p>
+    </div>
+    <div class="audience-grid">
+      <article class="audience-card kids">
+        <div class="icon">🧒</div>
+        <h3>Para los niños</h3>
+        <p>Su perfil con avatar grande, voz amiga, acertijos con vocales y sílabas, y una sorpresa cada vez que terminan una actividad.</p>
+        <a href="login-ninos.html" class="btn btn-primary">Ir al perfil del niño →</a>
+      </article>
+      <article class="audience-card family">
+        <div class="icon">👨‍👩‍👧</div>
+        <h3>Para las familias</h3>
+        <p>Cómo acompañar a tu hijo/a, qué datos recogemos, control parental y consejos prácticos para hacer de la lectura un hábito.</p>
+        <a href="guia-adulto.html" class="btn btn-secondary">Guía para familias →</a>
+      </article>
+      <article class="audience-card pro">
+        <div class="icon">🎓</div>
+        <h3>Para profesionales</h3>
+        <p>Docentes, psicólogos/as, neurolingüistas y logopedas pueden ver el progreso del menor con autorización del tutor.</p>
+        <a href="registro-profesional.html" class="btn btn-secondary">Cuenta profesional →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="actividades" class="activities">
+  <div class="section-inner">
+    <div class="section-head">
+      <span class="section-eyebrow">Las 8 actividades</span>
+      <h2 class="section-title">Un recorrido completo por la lectoescritura</h2>
+      <p class="section-sub">Desde reconocer la primera vocal hasta colorear letras. Diseñadas para sumar dificultad sin agobiar.</p>
+    </div>
+    <div class="act-grid">
+      <a href="login-ninos.html" class="act-card"><span class="act-icon">🎨</span><span class="act-num">01</span><span class="act-name">Vocales</span></a>
+      <a href="login-ninos.html" class="act-card"><span class="act-icon">✏️</span><span class="act-num">02</span><span class="act-name">Escribir</span></a>
+      <a href="login-ninos.html" class="act-card"><span class="act-icon">🔤</span><span class="act-num">03</span><span class="act-name">Huecos</span></a>
+      <a href="login-ninos.html" class="act-card"><span class="act-icon">🔀</span><span class="act-num">04</span><span class="act-name">Ordenar</span></a>
+      <a href="login-ninos.html" class="act-card"><span class="act-icon">🔢</span><span class="act-num">05</span><span class="act-name">Sílabas</span></a>
+      <a href="login-ninos.html" class="act-card"><span class="act-icon">👂</span><span class="act-num">06</span><span class="act-name">Sonido R</span></a>
+      <a href="login-ninos.html" class="act-card"><span class="act-icon">🧩</span><span class="act-num">07</span><span class="act-name">Unir</span></a>
+      <a href="login-ninos.html" class="act-card"><span class="act-icon">🌈</span><span class="act-num">08</span><span class="act-name">Colorear</span></a>
+    </div>
+  </div>
+</section>
+
+<section id="acceso" class="acceso">
+  <div class="section-inner">
+    <div class="section-head">
+      <span class="section-eyebrow">Accesos demo</span>
+      <h2 class="section-title">Entra como familia o profesional</h2>
+      <p class="section-sub">Carga datos demo y elige una cuenta para ver el panel completo. Las contraseñas no se piden en este modo demostración.</p>
+    </div>
+
+    <div id="accesoStatus"></div>
+
+    <div id="accesoEmpty" class="acceso-empty">
+      <div class="ico">⚡</div>
+      <h3>No hay cuentas creadas todavía</h3>
+      <p>Carga la demo y se crearán 3 familias, 3 profesionales, 3 menores y 7 días de eventos sintéticos para que puedas explorar.</p>
+      <button class="btn btn-primary btn-lg" id="btnSeed">⚡ Cargar datos demo</button>
+    </div>
+
+    <div id="accesoFull" style="display:none">
+      <div class="acceso-tabs">
+        <button class="acceso-tab active" data-tab="familias">👨‍👩‍👧 Familias</button>
+        <button class="acceso-tab" data-tab="profesionales">🎓 Profesionales</button>
+      </div>
+      <div id="listFamilias" class="acceso-grid"></div>
+      <div id="listProfesionales" class="acceso-grid" style="display:none"></div>
+      <div class="acceso-actions">
+        <a href="registro-adulto.html" class="btn btn-secondary">+ Nueva familia</a>
+        <a href="registro-profesional.html" class="btn btn-secondary">+ Nuevo profesional</a>
+        <button type="button" class="btn btn-secondary" id="btnSeedAgain">⚡ Recargar demo</button>
+        <button type="button" class="btn acceso-reset" id="btnReset">Borrar todo</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-strip">
+  <h2>¿Listos para la primera sesión?</h2>
+  <p>Crea el perfil del niño en menos de un minuto. Sin instalaciones, sin esperas, sin anuncios.</p>
+  <a href="login-ninos.html" class="btn btn-primary btn-lg">🚀 Empezar a jugar</a>
+</div>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-cols">
+      <div class="foot-col foot-about">
+        <a href="landing.html" class="brand">
+          <span class="brand-logo" style="font-size:0.92rem;letter-spacing:-0.02em;width:40px;height:36px">RF</span>
+          <span style="display:flex;flex-direction:column;line-height:1.05;gap:1px"><span>Reuven</span><span style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal)">Enseñamos a Pensar</span></span>
+        </a>
+        <p>Lectoescritura para niños y niñas en español. Hecho con cariño para familias, escuelas y consultas.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Niños</h4>
+        <a href="login-ninos.html">Empezar a jugar</a>
+        <a href="login-ninos.html">Elegir perfil</a>
+        <a href="#actividades">Las actividades</a>
+      </div>
+      <div class="foot-col">
+        <h4>Familias</h4>
+        <a href="guia-adulto.html">Guía para familias</a>
+        <a href="registro-adulto.html">Crear cuenta</a>
+        <a href="guia-adulto.html#control-parental">Control parental</a>
+      </div>
+      <div class="foot-col">
+        <h4>Profesionales</h4>
+        <a href="registro-profesional.html">Crear cuenta pro</a>
+        <a href="dashboard-profesional.html">Ver dashboard</a>
+        <a href="#">Política de privacidad</a>
+      </div>
+    </div>
+    <div class="foot-notice">Solo personas que conviven con el menor pueden usar su perfil.</div>
+    <div class="foot-bottom">© 2026 Reuven · Aprender a leer también puede ser un juego.</div>
+  </div>
+</footer>
+
+<script src="assets/js/metrics.js"></script>
+<script src="assets/js/auth.js"></script>
+<script>
+(function () {
+  const M = window.ReuvenMetrics;
+  const Auth = window.ReuvenAuth;
+
+  const PROF_LBL = {
+    docente: 'Docente', psicologo: 'Psicólogo/a',
+    neurolinguista: 'Neurolingüista', logopeda: 'Logopeda', otro: 'Profesional'
+  };
+  const REL_LBL = { madre: 'Madre', padre: 'Padre', tutor: 'Tutor/a', otro: 'Otro' };
+
+  function initials(nombre) {
+    return (nombre || '?').split(' ').slice(0, 2).map(s => s[0] || '').join('').toUpperCase();
+  }
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  /* ---------- Estado activo ---------- */
+  function renderStatus() {
+    const el = document.getElementById('accesoStatus');
+    const adulto = Auth.getAdultoActivo();
+    const pro = Auth.getProfesionalActivo();
+    const partes = [];
+    if (adulto) partes.push('<div class="acceso-status">👨‍👩‍👧 Sesión familia activa: <strong>' + escapeHtml(adulto.nombre) + '</strong> <span style="color: var(--text-soft); font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem;">(' + escapeHtml(adulto.email) + ')</span> <button class="logout" data-logout="adulto">Cerrar sesión</button></div>');
+    if (pro) partes.push('<div class="acceso-status">🎓 Sesión profesional activa: <strong>' + escapeHtml(pro.nombre) + '</strong> <span style="color: var(--text-soft); font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem;">(' + escapeHtml(pro.email) + ')</span> <button class="logout" data-logout="profesional">Cerrar sesión</button></div>');
+    el.innerHTML = partes.join('');
+    el.querySelectorAll('[data-logout]').forEach(b => {
+      b.addEventListener('click', () => {
+        if (b.dataset.logout === 'adulto') Auth.logoutAdulto();
+        else Auth.logoutProfesional();
+        renderAll();
+      });
+    });
+  }
+
+  /* ---------- Familias ---------- */
+  function renderFamilias() {
+    const cont = document.getElementById('listFamilias');
+    const adultos = Auth.getAdultos();
+    const adultoActivo = Auth.getAdultoActivo();
+    const perfiles = M.getPerfiles();
+
+    if (adultos.length === 0) {
+      cont.innerHTML = '<div style="grid-column: 1/-1; padding: 24px; text-align: center; color: var(--text-soft);">Aún no hay familias. <a href="registro-adulto.html" style="color: var(--teal-dark); font-weight: 700;">Crear cuenta de familia →</a></div>';
+      return;
+    }
+    cont.innerHTML = adultos.map(a => {
+      const misPerfiles = perfiles.filter(p => p.adultoId === a.id);
+      const activa = adultoActivo && adultoActivo.id === a.id ? ' activa' : '';
+      const relLbl = REL_LBL[a.relacion] || 'Tutor/a';
+      return '' +
+        '<div class="user-card' + activa + '">' +
+          '<div class="user-head">' +
+            '<div class="user-avatar fa">' + initials(a.nombre) + '</div>' +
+            '<div class="user-info">' +
+              '<div class="nm">' + escapeHtml(a.nombre) + '</div>' +
+              '<div class="em">' + escapeHtml(a.email) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="user-meta">' +
+            '<span class="chip">' + relLbl + '</span>' +
+            '<span class="chip"><strong>' + misPerfiles.length + '</strong> menor' + (misPerfiles.length === 1 ? '' : 'es') + '</span>' +
+            (misPerfiles.length ? '<span class="chip">' + misPerfiles.map(p => escapeHtml(p.nombre)).join(', ') + '</span>' : '') +
+          '</div>' +
+          '<button class="enter-btn" data-id="' + a.id + '" data-tipo="familia">' + (activa ? '✓ Continuar como familia' : 'Entrar como familia →') + '</button>' +
+        '</div>';
+    }).join('');
+  }
+
+  /* ---------- Profesionales ---------- */
+  function renderProfesionales() {
+    const cont = document.getElementById('listProfesionales');
+    const profes = Auth.getProfesionales();
+    const proActivo = Auth.getProfesionalActivo();
+
+    if (profes.length === 0) {
+      cont.innerHTML = '<div style="grid-column: 1/-1; padding: 24px; text-align: center; color: var(--text-soft);">Aún no hay profesionales. <a href="registro-profesional.html" style="color: var(--teal-dark); font-weight: 700;">Crear cuenta profesional →</a></div>';
+      return;
+    }
+    cont.innerHTML = profes.map(p => {
+      const vinc = Auth.getPerfilesDeProfesional(p.id);
+      const activa = proActivo && proActivo.id === p.id ? ' activa' : '';
+      const profLbl = PROF_LBL[p.profesion] || 'Profesional';
+      return '' +
+        '<div class="user-card' + activa + '">' +
+          '<div class="user-head">' +
+            '<div class="user-avatar pa">' + initials(p.nombre) + '</div>' +
+            '<div class="user-info">' +
+              '<div class="nm">' + escapeHtml(p.nombre) + '</div>' +
+              '<div class="em">' + escapeHtml(p.email) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="user-meta">' +
+            '<span class="chip">' + profLbl + '</span>' +
+            (p.colegiado ? '<span class="chip">Col. ' + escapeHtml(p.colegiado) + '</span>' : '') +
+            '<span class="chip"><strong>' + vinc.length + '</strong> menor' + (vinc.length === 1 ? '' : 'es') + ' vinculado' + (vinc.length === 1 ? '' : 's') + '</span>' +
+          '</div>' +
+          '<button class="enter-btn" data-id="' + p.id + '" data-tipo="profesional">' + (activa ? '✓ Continuar al panel' : 'Entrar y ver métricas →') + '</button>' +
+        '</div>';
+    }).join('');
+  }
+
+  /* ---------- Pintar todo ---------- */
+  function renderAll() {
+    const empty = Auth.getAdultos().length === 0 && Auth.getProfesionales().length === 0;
+    document.getElementById('accesoEmpty').style.display = empty ? '' : 'none';
+    document.getElementById('accesoFull').style.display  = empty ? 'none' : '';
+    if (!empty) {
+      renderStatus();
+      renderFamilias();
+      renderProfesionales();
+      bindEnterButtons();
+    }
+  }
+
+  function bindEnterButtons() {
+    document.querySelectorAll('.enter-btn[data-tipo]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        const tipo = btn.dataset.tipo;
+        if (tipo === 'familia') {
+          Auth.setAdultoActivo(id);
+          window.location.href = 'login-ninos.html';
+        } else if (tipo === 'profesional') {
+          Auth.setProfesionalActivo(id);
+          window.location.href = 'dashboard-profesional.html';
+        }
+      });
+    });
+  }
+
+  /* ---------- Tabs ---------- */
+  document.querySelectorAll('.acceso-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.acceso-tab').forEach(t => t.classList.toggle('active', t === tab));
+      const which = tab.dataset.tab;
+      document.getElementById('listFamilias').style.display = which === 'familias' ? '' : 'none';
+      document.getElementById('listProfesionales').style.display = which === 'profesionales' ? '' : 'none';
+    });
+  });
+
+  /* ---------- Acciones ---------- */
+  function doSeed() {
+    Auth.seedDemo();
+    renderAll();
+    document.getElementById('acceso').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function doReset() {
+    if (!confirm('Esto borra todos los datos locales (familias, profesionales, menores, eventos). ¿Continuar?')) return;
+    Auth.resetTodo();
+    renderAll();
+  }
+  document.getElementById('btnSeed').addEventListener('click', doSeed);
+  document.getElementById('btnSeedAgain').addEventListener('click', doSeed);
+  document.getElementById('btnReset').addEventListener('click', doReset);
+
+  renderAll();
+})();
+</script>
+
+</body>
+</html>

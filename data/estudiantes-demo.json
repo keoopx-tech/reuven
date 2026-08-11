@@ -1,0 +1,57 @@
+{
+  "_comentario": "Estudiantes demo. Los eventos de métricas se generan dinámicamente al sembrar (ver assets/js/seed.js).",
+  "estudiantes": [
+    {
+      "id": "p_liam",
+      "nombre": "Liam",
+      "emoji": "🦊",
+      "esNino": true,
+      "tutorIds": ["u_papa"],
+      "profesionalesIds": ["u_profe"],
+      "perfilDemo": {
+        "nivel": "intermedio",
+        "tendencia": "mejora",
+        "tasaAciertoObjetivo": 0.78
+      }
+    },
+    {
+      "id": "p_ellie",
+      "nombre": "Ellie",
+      "emoji": "🐱",
+      "esNino": false,
+      "tutorIds": ["u_papa"],
+      "profesionalesIds": ["u_profe"],
+      "perfilDemo": {
+        "nivel": "avanzado",
+        "tendencia": "estable",
+        "tasaAciertoObjetivo": 0.88
+      }
+    },
+    {
+      "id": "p_mateo",
+      "nombre": "Mateo",
+      "emoji": "🐘",
+      "esNino": true,
+      "tutorIds": ["u_mama"],
+      "profesionalesIds": ["u_profe"],
+      "perfilDemo": {
+        "nivel": "principiante",
+        "tendencia": "mejora",
+        "tasaAciertoObjetivo": 0.55
+      }
+    },
+    {
+      "id": "p_sofia",
+      "nombre": "Sofía",
+      "emoji": "🦄",
+      "esNino": false,
+      "tutorIds": [],
+      "profesionalesIds": ["u_profe"],
+      "perfilDemo": {
+        "nivel": "intermedio",
+        "tendencia": "irregular",
+        "tasaAciertoObjetivo": 0.65
+      }
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 1024" width="768" height="1024" font-family="Fredoka, -apple-system, sans-serif">
+  <defs>
+    <linearGradient id="gTealNavy" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c8102e"/>
+      <stop offset="100%" stop-color="#1e3a5f"/>
+    </linearGradient>
+    <linearGradient id="avYellow" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/><stop offset="100%" stop-color="#fbbf24"/>
+    </linearGradient>
+    <linearGradient id="avPink" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fce7f3"/><stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <linearGradient id="avBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#dbeafe"/><stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feOffset dy="8" in="blur" result="offset"/>
+      <feFlood flood-color="#1e3a5f" flood-opacity="0.14"/>
+      <feComposite in2="offset" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      .h1 { font-family: 'Nunito', sans-serif; font-weight: 900; fill: #1e3a5f; letter-spacing: -1px; }
+      .body { font-family: 'Fredoka', sans-serif; fill: #6b7280; }
+      .name { font-family: 'Nunito', sans-serif; font-weight: 800; fill: #1e3a5f; }
+    </style>
+  </defs>
+
+  <rect width="768" height="1024" fill="#f5f3ee"/>
+
+  <circle cx="80" cy="180" r="90" fill="#fce7f3" opacity="0.6"/>
+  <circle cx="700" cy="900" r="120" fill="#dbeafe" opacity="0.5"/>
+  <circle cx="660" cy="120" r="60" fill="#fef3c7" opacity="0.7"/>
+
+  <g id="nav">
+    <rect x="32" y="14" width="34" height="34" rx="8" fill="#1e3a5f"/>
+    <rect x="32" y="14" width="17" height="34" rx="8" fill="#c8102e"/>
+    <rect x="40" y="14" width="9" height="34" fill="#c8102e"/>
+    <text x="40" y="37" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="13" fill="#fff">R</text>
+    <text x="58" y="37" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="13" fill="#fff">F</text>
+    <text x="76" y="32" font-family="Nunito" font-weight="800" font-size="16" fill="#1e3a5f">Reuven</text>
+    <text x="76" y="46" font-family="Fredoka" font-weight="600" font-size="9" fill="#9f1d35" letter-spacing="0.5">ENSEÑAMOS A PENSAR</text>
+    <text x="720" y="38" text-anchor="end" font-family="Fredoka" font-weight="600" font-size="14" fill="#9f1d35">Ayuda</text>
+  </g>
+
+  <g id="heading">
+    <text x="384" y="170" text-anchor="middle" class="h1" font-size="40">¿Quién va a jugar hoy?</text>
+    <text x="384" y="208" text-anchor="middle" class="body" font-size="18">Elige tu perfil para empezar.</text>
+  </g>
+
+  <!-- Grid 2x2 -->
+  <g id="profiles" transform="translate(124, 280)">
+    <!-- Liam -->
+    <g filter="url(#softShadow)">
+      <rect width="240" height="260" rx="28" fill="#fff"/>
+      <circle cx="120" cy="110" r="72" fill="url(#avYellow)"/>
+      <text x="120" y="132" text-anchor="middle" font-size="76">🦊</text>
+      <rect x="84" y="190" width="72" height="24" rx="12" fill="#fef3c7"/>
+      <text x="120" y="207" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="12" fill="#92400e">Niño</text>
+      <text x="120" y="240" text-anchor="middle" class="name" font-size="24">Liam</text>
+    </g>
+    <!-- Ellie -->
+    <g transform="translate(280, 0)" filter="url(#softShadow)">
+      <rect width="240" height="260" rx="28" fill="#fff"/>
+      <circle cx="120" cy="110" r="72" fill="url(#avPink)"/>
+      <text x="120" y="132" text-anchor="middle" font-size="76">🐱</text>
+      <rect x="84" y="190" width="72" height="24" rx="12" fill="#fce7f3"/>
+      <text x="120" y="207" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="12" fill="#9d174d">Niña</text>
+      <text x="120" y="240" text-anchor="middle" class="name" font-size="24">Ellie</text>
+    </g>
+    <!-- Mateo -->
+    <g transform="translate(0, 296)" filter="url(#softShadow)">
+      <rect width="240" height="260" rx="28" fill="#fff"/>
+      <circle cx="120" cy="110" r="72" fill="url(#avBlue)"/>
+      <text x="120" y="132" text-anchor="middle" font-size="76">🐻</text>
+      <rect x="84" y="190" width="72" height="24" rx="12" fill="#dbeafe"/>
+      <text x="120" y="207" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="12" fill="#1e40af">Niño</text>
+      <text x="120" y="240" text-anchor="middle" class="name" font-size="24">Mateo</text>
+    </g>
+    <!-- Add new -->
+    <g transform="translate(280, 296)">
+      <rect width="240" height="260" rx="28" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="6 6"/>
+      <circle cx="120" cy="110" r="68" fill="#f5f3ee" stroke="#e5e7eb" stroke-width="2"/>
+      <text x="120" y="132" text-anchor="middle" font-family="Nunito" font-weight="900" font-size="64" fill="#9ca3af">+</text>
+      <text x="120" y="240" text-anchor="middle" class="name" font-size="20" fill="#6b7280">Añadir perfil</text>
+    </g>
+  </g>
+
+  <g id="notice">
+    <rect x="64" y="888" width="640" height="50" rx="12" fill="#fffbeb" stroke="#fde68a"/>
+    <text x="92" y="918" font-size="20">🛡️</text>
+    <text x="128" y="918" font-family="Fredoka" font-weight="500" font-size="14" fill="#92400e">Solo personas que conviven con el menor pueden usar su perfil.</text>
+  </g>
+
+  <g id="footlinks">
+    <text x="384" y="970" text-anchor="middle" font-family="Fredoka" font-weight="600" font-size="14" fill="#6b7280">¿Eres adulto?</text>
+    <text x="248" y="998" font-family="Fredoka" font-weight="700" font-size="14" fill="#9f1d35">Acceso familias</text>
+    <text x="392" y="998" font-family="Fredoka" font-weight="700" font-size="14" fill="#9f1d35">·</text>
+    <text x="416" y="998" font-family="Fredoka" font-weight="700" font-size="14" fill="#9f1d35">Acceso profesionales</text>
+  </g>
+</svg>

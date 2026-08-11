@@ -1,0 +1,21 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/assets/*", "/*.js", "/*.css", "/*.png", "/*.jpg", "/*.svg"]
+  },
+  "routes": [
+    { "route": "/dashboard-profesional.html", "redirect": "/dashboard", "statusCode": 301 },
+    { "route": "/registro-adulto.html",       "redirect": "/registro/familia", "statusCode": 301 },
+    { "route": "/registro-profesional.html",  "redirect": "/registro/profesional", "statusCode": 301 },
+    { "route": "/guia-adulto.html",           "redirect": "/guia-familia", "statusCode": 301 },
+    { "route": "/login-ninos.html",           "redirect": "/perfiles", "statusCode": 301 }
+  ],
+  "globalHeaders": {
+    "X-Frame-Options": "SAMEORIGIN",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "strict-origin-when-cross-origin"
+  },
+  "mimeTypes": {
+    ".json": "application/json"
+  }
+}

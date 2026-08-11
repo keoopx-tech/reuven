@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Métricas · Reuven</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="assets/js/seed.js"></script>
+<script src="assets/js/metrics.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --navy: #1e3a5f;
+    --teal: #0d9488;
+    --teal-dark: #0f766e;
+    --green-soft: #f0fdf4;
+    --green-border: #86efac;
+    --green-dark: #16a34a;
+    --green: #22c55e;
+    --yellow: #fbbf24;
+    --pink: #ec4899;
+    --orange: #f97316;
+    --purple: #8b5cf6;
+    --red: #ef4444;
+    --blue: #3b82f6;
+    --text: #1f2937;
+    --text-soft: #6b7280;
+    --border-soft: #e5e7eb;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(245, 243, 238, 0.92);
+    backdrop-filter: saturate(150%) blur(8px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    padding: 14px 22px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--navy);
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.3rem;
+  }
+  .brand-logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800;
+  }
+  .nav-links { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .nav-link {
+    color: var(--text-soft); text-decoration: none;
+    font-weight: 600; font-size: 0.95rem; padding: 8px 14px;
+    border-radius: 10px; transition: all 0.15s;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--navy); background: var(--green-soft); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: none; cursor: pointer;
+    font-family: inherit; font-weight: 700; text-decoration: none;
+    border-radius: 14px; padding: 11px 22px;
+    transition: all 0.2s; font-size: 1rem;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    color: white; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-secondary { background: var(--surface); color: var(--navy); border: 1.5px solid var(--border-soft); }
+  .btn-secondary:hover { border-color: var(--navy); }
+  .btn-danger { background: #fee2e2; color: #b91c1c; border: 1.5px solid #fecaca; }
+  .btn-danger:hover { background: #fecaca; }
+
+  /* HERO + selector */
+  .hero {
+    max-width: 1100px; margin: 0 auto;
+    padding: 60px 22px 30px;
+    text-align: center;
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-soft); border: 1px solid var(--green-border);
+    color: var(--green-dark); padding: 6px 14px;
+    border-radius: 100px; font-weight: 700; font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 900; line-height: 1.1;
+    color: var(--navy); letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .hero p {
+    color: var(--text-soft);
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    max-width: 640px; margin: 0 auto 26px;
+  }
+  .perfil-bar {
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px; flex-wrap: wrap;
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 16px 20px;
+    max-width: 720px; margin: 0 auto;
+    box-shadow: 0 8px 24px -12px rgba(0,0,0,0.08);
+  }
+  .perfil-bar label { font-weight: 700; color: var(--navy); }
+  .perfil-bar select {
+    font-family: inherit; font-size: 1rem; font-weight: 600;
+    color: var(--navy);
+    background: var(--bg);
+    border: 1.5px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    min-width: 220px;
+  }
+  .perfil-bar select:focus { outline: none; border-color: var(--teal); }
+  .perfil-avatar {
+    width: 54px; height: 54px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.9rem;
+    background: linear-gradient(135deg, #fef3c7, var(--yellow));
+  }
+
+  /* LAYOUT */
+  .layout {
+    max-width: 1100px; margin: 0 auto;
+    padding: 30px 22px 60px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 40px;
+  }
+  .toc {
+    position: sticky; top: 90px; align-self: start;
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    padding: 18px 16px;
+  }
+  .toc h4 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy); font-size: 0.85rem;
+    font-weight: 800; letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .toc a {
+    display: block;
+    color: var(--text-soft);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .toc a:hover { background: var(--green-soft); color: var(--green-dark); }
+
+  /* CONTENT */
+  .content { min-width: 0; }
+  .content section {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 22px;
+    padding: 28px 30px;
+    margin-bottom: 22px;
+    scroll-margin-top: 80px;
+  }
+  .content h2 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy);
+    font-size: clamp(1.3rem, 2.5vw, 1.7rem);
+    font-weight: 800;
+    margin-bottom: 18px;
+    letter-spacing: -0.01em;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .content h2 .ico {
+    font-size: 1.4rem;
+  }
+  .content p.sub { color: var(--text-soft); font-size: 0.95rem; margin-bottom: 18px; }
+
+  /* KPI grid */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .kpi {
+    border-radius: 18px;
+    padding: 20px 22px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 22px -10px rgba(0,0,0,0.18);
+  }
+  .kpi.kpi-time   { background: linear-gradient(135deg, var(--teal), var(--navy)); }
+  .kpi.kpi-done   { background: linear-gradient(135deg, var(--green), var(--green-dark)); }
+  .kpi.kpi-rate   { background: linear-gradient(135deg, var(--yellow), var(--orange)); }
+  .kpi.kpi-fails  { background: linear-gradient(135deg, var(--pink), var(--red)); }
+  .kpi .label { font-size: 0.82rem; font-weight: 700; opacity: 0.9; letter-spacing: 0.04em; text-transform: uppercase; }
+  .kpi .val   { font-family: 'Nunito', sans-serif; font-size: 2.2rem; font-weight: 900; line-height: 1.05; margin-top: 8px; }
+  .kpi .sub   { font-size: 0.85rem; opacity: 0.85; margin-top: 4px; }
+  .kpi .ico   { position: absolute; top: 12px; right: 14px; font-size: 1.6rem; opacity: 0.6; }
+
+  /* Chart container */
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    height: 320px;
+  }
+  .chart-wrap.tall { height: 360px; }
+
+  /* Tabla */
+  .tabla {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  .tabla th, .tabla td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .tabla th {
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    color: var(--navy);
+    background: var(--bg);
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .tabla tr:last-child td { border-bottom: none; }
+  .tabla .tag {
+    display: inline-block; padding: 3px 10px; border-radius: 100px;
+    font-size: 0.78rem; font-weight: 700;
+  }
+  .tag-ok { background: var(--green-soft); color: var(--green-dark); border: 1px solid var(--green-border); }
+  .tag-no { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+  .task-chip {
+    display: inline-block;
+    padding: 3px 10px; border-radius: 100px;
+    font-size: 0.78rem; font-weight: 800;
+    color: white;
+  }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-soft);
+  }
+  .empty .ico { font-size: 2.6rem; margin-bottom: 8px; }
+
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .toc { position: static; }
+    .content section { padding: 22px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="landing.html" class="brand">
+      <span class="brand-logo">R</span>
+      <span>Reuven</span>
+    </a>
+    <div class="nav-links">
+      <a href="landing.html" class="nav-link">Inicio</a>
+      <a href="guia-adulto.html" class="nav-link">Para familias</a>
+      <a href="metricas.html" class="nav-link active">Métricas</a>
+      <span id="sesionInfo" style="display:none;font-size:0.88rem;color:var(--text-soft);font-weight:600;padding:0 8px;"></span>
+      <button type="button" id="btnLogout" class="btn btn-secondary" style="display:none;padding:8px 14px;font-size:0.9rem;">Salir</button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <span class="pill">📊 Progreso de cada niño/a</span>
+  <h1>Métricas</h1>
+  <p>Cuánto practica, en qué actividades acierta más rápido y dónde acumula más intentos. Todo guardado solo en este dispositivo.</p>
+
+  <div class="perfil-bar">
+    <div class="perfil-avatar" id="perfilAvatar">🦊</div>
+    <label for="perfilSelect">Perfil:</label>
+    <select id="perfilSelect"></select>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="toc">
+    <h4>En esta página</h4>
+    <a href="#resumen">Resumen</a>
+    <a href="#por-actividad">Por actividad</a>
+    <a href="#tiempo">Tiempo dedicado</a>
+    <a href="#evolucion">Evolución (14 días)</a>
+    <a href="#sesiones">Últimas sesiones</a>
+    <a href="#datos">Exportar y borrar</a>
+  </aside>
+
+  <main class="content">
+
+    <section id="resumen">
+      <h2><span class="ico">📈</span> Resumen</h2>
+      <div class="kpi-grid">
+        <div class="kpi kpi-time">
+          <span class="ico">⏱️</span>
+          <div class="label">Tiempo total</div>
+          <div class="val" id="kpiTiempo">0s</div>
+          <div class="sub" id="kpiTiempoSub">Sumado entre todas las tareas</div>
+        </div>
+        <div class="kpi kpi-done">
+          <span class="ico">🏆</span>
+          <div class="label">Tareas completadas</div>
+          <div class="val" id="kpiDone">0</div>
+          <div class="sub" id="kpiDoneSub">De principio a fin</div>
+        </div>
+        <div class="kpi kpi-rate">
+          <span class="ico">🎯</span>
+          <div class="label">Tasa de acierto</div>
+          <div class="val" id="kpiRate">0%</div>
+          <div class="sub" id="kpiRateSub">Aciertos / total intentos</div>
+        </div>
+        <div class="kpi kpi-fails">
+          <span class="ico">↻</span>
+          <div class="label">Intentos fallidos</div>
+          <div class="val" id="kpiFails">0</div>
+          <div class="sub" id="kpiFailsSub">Donde más necesita apoyo</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="por-actividad">
+      <h2><span class="ico">🎨</span> Por actividad</h2>
+      <p class="sub">Aciertos vs intentos fallidos en cada una de las 8 tareas. Las barras rojas señalan dificultades.</p>
+      <div class="chart-wrap tall"><canvas id="chartActividad"></canvas></div>
+    </section>
+
+    <section id="tiempo">
+      <h2><span class="ico">⏳</span> Tiempo dedicado</h2>
+      <p class="sub">Cómo se reparte el tiempo de práctica entre las 8 actividades.</p>
+      <div class="chart-wrap"><canvas id="chartTiempo"></canvas></div>
+    </section>
+
+    <section id="evolucion">
+      <h2><span class="ico">📅</span> Evolución (últimos 14 días)</h2>
+      <p class="sub">Aciertos y fallidos por día para ver progreso o estancamiento.</p>
+      <div class="chart-wrap"><canvas id="chartEvolucion"></canvas></div>
+    </section>
+
+    <section id="sesiones">
+      <h2><span class="ico">🗂️</span> Últimas sesiones</h2>
+      <div id="tablaWrap"></div>
+    </section>
+
+    <section id="datos">
+      <h2><span class="ico">⚙️</span> Datos del perfil</h2>
+      <p class="sub">Tus métricas viven solo en este navegador. Puedes exportarlas para guardarlas o compartirlas con un profesional.</p>
+      <div class="actions">
+        <button class="btn btn-primary" id="btnExport">⬇️ Exportar JSON</button>
+        <button class="btn btn-danger" id="btnReset">🗑️ Borrar datos del perfil</button>
+        <a href="login-ninos.html" class="btn btn-secondary">Cambiar perfil</a>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+const M = window.ReuvenMetrics;
+M.sembrarSiVacio();
+
+// Gate de sesión
+const sesion = M.getSesion();
+if (!sesion) {
+  window.location.replace('login-adultos.html');
+}
+
+const TASKS = M.TASKS;
+const usuario = M.getUsuarioSesion();
+const sesionInfo = document.getElementById('sesionInfo');
+const btnLogout = document.getElementById('btnLogout');
+if (usuario) {
+  const rolLabel = usuario.rol === 'profesional' ? '🎓 Profesional' : '👨‍👩‍👧 Tutor';
+  sesionInfo.textContent = rolLabel + ' · ' + usuario.nombre;
+  sesionInfo.style.display = 'inline';
+  btnLogout.style.display = 'inline-flex';
+}
+btnLogout.addEventListener('click', () => {
+  M.logoutAdulto();
+  window.location.href = 'login-adultos.html';
+});
+
+const sel = document.getElementById('perfilSelect');
+const avatar = document.getElementById('perfilAvatar');
+
+const charts = {};
+
+function setAvatarBg(idx) {
+  const palettes = [
+    'linear-gradient(135deg, #fef3c7, #fbbf24)',
+    'linear-gradient(135deg, #fce7f3, #ec4899)',
+    'linear-gradient(135deg, #dbeafe, #3b82f6)',
+    'linear-gradient(135deg, #ede9fe, #a855f7)',
+  ];
+  avatar.style.background = palettes[idx % palettes.length];
+}
+
+function getPerfilesVisibles() {
+  return M.getEstudiantesPermitidos();
+}
+
+function renderPerfilSelect() {
+  const perfiles = getPerfilesVisibles();
+  sel.innerHTML = '';
+  if (perfiles.length === 0) {
+    const opt = document.createElement('option');
+    opt.value = '';
+    opt.textContent = 'No tienes estudiantes asignados';
+    sel.appendChild(opt);
+    avatar.textContent = '👤';
+    return;
+  }
+  const activo = M.getPerfilActivo();
+  perfiles.forEach((p) => {
+    const opt = document.createElement('option');
+    opt.value = p.id;
+    opt.textContent = p.emoji + ' ' + p.nombre + ' · ' + (p.esNino ? 'Niño' : 'Niña');
+    sel.appendChild(opt);
+  });
+  if (activo && perfiles.some(p => p.id === activo.id)) {
+    sel.value = activo.id;
+  } else {
+    M.setPerfilActivo(perfiles[0].id);
+    sel.value = perfiles[0].id;
+  }
+  syncAvatar();
+}
+
+function syncAvatar() {
+  const perfiles = getPerfilesVisibles();
+  const idx = perfiles.findIndex(p => p.id === sel.value);
+  const p = perfiles[idx];
+  if (p) {
+    avatar.textContent = p.emoji || '🐻';
+    setAvatarBg(idx);
+  }
+}
+
+function fmtPct(n, total) {
+  if (!total) return '0%';
+  return Math.round((n / total) * 100) + '%';
+}
+
+function destroyChart(name) {
+  if (charts[name]) { charts[name].destroy(); charts[name] = null; }
+}
+
+function renderResumen(perfilId) {
+  const r = M.getResumen(perfilId);
+  document.getElementById('kpiTiempo').textContent = M.formatDuracion(r.tiempoMs);
+  document.getElementById('kpiDone').textContent = r.completadas;
+  document.getElementById('kpiRate').textContent = r.tasaAcierto + '%';
+  document.getElementById('kpiFails').textContent = r.fallidos;
+  document.getElementById('kpiTiempoSub').textContent = (r.aciertos + r.fallidos) + ' intentos en total';
+  document.getElementById('kpiDoneSub').textContent = 'Sobre 8 actividades disponibles';
+  document.getElementById('kpiRateSub').textContent = r.aciertos + ' aciertos · ' + r.fallidos + ' fallidos';
+  document.getElementById('kpiFailsSub').textContent = r.fallidos === 0 ? '¡Sin fallos registrados!' : 'Estos son los reintentos';
+}
+
+function renderActividad(perfilId) {
+  destroyChart('actividad');
+  const data = M.getPorActividad(perfilId);
+  const labels = data.map(d => d.nombre);
+  const aciertos = data.map(d => d.aciertos);
+  const fallidos = data.map(d => d.fallidos);
+  const tiempoMedio = data.map(d => d.sesiones > 0 ? Math.round(d.tiempoMs / d.sesiones / 1000) : 0);
+
+  const ctx = document.getElementById('chartActividad').getContext('2d');
+  charts.actividad = new Chart(ctx, {
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          type: 'bar',
+          label: 'Aciertos',
+          data: aciertos,
+          backgroundColor: '#22c55e',
+          borderRadius: 8,
+          yAxisID: 'y',
+          maxBarThickness: 36,
+        },
+        {
+          type: 'bar',
+          label: 'Intentos fallidos',
+          data: fallidos,
+          backgroundColor: '#ef4444',
+          borderRadius: 8,
+          yAxisID: 'y',
+          maxBarThickness: 36,
+        },
+        {
+          type: 'line',
+          label: 'Tiempo medio (s)',
+          data: tiempoMedio,
+          borderColor: '#1e3a5f',
+          backgroundColor: 'rgba(30, 58, 95, 0.1)',
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 4,
+          pointBackgroundColor: '#1e3a5f',
+          yAxisID: 'y1',
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 800 },
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { family: 'Fredoka', weight: '600' } } },
+        tooltip: { titleFont: { family: 'Nunito', weight: '800' }, bodyFont: { family: 'Fredoka' } },
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'Fredoka', size: 11 } } },
+        y: {
+          beginAtZero: true,
+          title: { display: true, text: 'Intentos', font: { family: 'Fredoka', weight: '600' } },
+          ticks: { font: { family: 'Fredoka' } },
+        },
+        y1: {
+          beginAtZero: true,
+          position: 'right',
+          grid: { drawOnChartArea: false },
+          title: { display: true, text: 'Tiempo medio (s)', font: { family: 'Fredoka', weight: '600' } },
+          ticks: { font: { family: 'Fredoka' } },
+        },
+      },
+    },
+  });
+}
+
+function renderTiempo(perfilId) {
+  destroyChart('tiempo');
+  const data = M.getPorActividad(perfilId);
+  const minutos = data.map(d => Math.round(d.tiempoMs / 1000));
+  const total = minutos.reduce((a, b) => a + b, 0);
+
+  const ctx = document.getElementById('chartTiempo').getContext('2d');
+  charts.tiempo = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: data.map(d => d.nombre),
+      datasets: [{
+        data: minutos,
+        backgroundColor: data.map(d => d.color),
+        borderColor: '#ffffff',
+        borderWidth: 3,
+        hoverOffset: 8,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 800 },
+      cutout: '60%',
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { family: 'Fredoka', weight: '600' }, boxWidth: 14 } },
+        tooltip: {
+          titleFont: { family: 'Nunito', weight: '800' },
+          bodyFont: { family: 'Fredoka' },
+          callbacks: {
+            label: (c) => {
+              const s = c.parsed;
+              const pct = total ? Math.round((s / total) * 100) : 0;
+              return c.label + ': ' + M.formatDuracion(s * 1000) + ' (' + pct + '%)';
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+function renderEvolucion(perfilId) {
+  destroyChart('evolucion');
+  const serie = M.getSerieTemporal(perfilId, 14);
+  const labels = serie.map(s => s.fecha.slice(5));
+  const ctx = document.getElementById('chartEvolucion').getContext('2d');
+  charts.evolucion = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Aciertos',
+          data: serie.map(s => s.aciertos),
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34, 197, 94, 0.15)',
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointBackgroundColor: '#22c55e',
+        },
+        {
+          label: 'Intentos fallidos',
+          data: serie.map(s => s.fallidos),
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239, 68, 68, 0.12)',
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointBackgroundColor: '#ef4444',
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 800 },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { family: 'Fredoka', weight: '600' } } },
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'Fredoka', size: 11 } } },
+        y: { beginAtZero: true, ticks: { font: { family: 'Fredoka' }, precision: 0 } },
+      },
+    },
+  });
+}
+
+function renderTabla(perfilId) {
+  const wrap = document.getElementById('tablaWrap');
+  const sesiones = M.getSesiones(perfilId, 20);
+  if (sesiones.length === 0) {
+    wrap.innerHTML = '<div class="empty"><div class="ico">🪺</div>Aún no hay sesiones registradas.<br>Cuando el niño/a juegue, aparecerán aquí.</div>';
+    return;
+  }
+  const filas = sesiones.map(s => {
+    const t = TASKS.find(x => x.num === s.taskNum);
+    const color = t ? t.color : '#6b7280';
+    const fecha = new Date(s.ts);
+    const f = fecha.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }) + ' ' +
+              fecha.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    return '<tr>' +
+      '<td>' + f + '</td>' +
+      '<td><span class="task-chip" style="background:' + color + '">' + s.nombre + '</span></td>' +
+      '<td>' + M.formatDuracion(s.duracionMs) + '</td>' +
+      '<td style="color:#16a34a;font-weight:700">' + s.aciertos + '</td>' +
+      '<td style="color:#b91c1c;font-weight:700">' + s.fallidos + '</td>' +
+      '<td>' + (s.completada ? '<span class="tag tag-ok">Completada</span>' : '<span class="tag tag-no">Abandonada</span>') + '</td>' +
+    '</tr>';
+  }).join('');
+  wrap.innerHTML =
+    '<table class="tabla">' +
+      '<thead><tr><th>Fecha</th><th>Tarea</th><th>Duración</th><th>Aciertos</th><th>Fallidos</th><th>Estado</th></tr></thead>' +
+      '<tbody>' + filas + '</tbody>' +
+    '</table>';
+}
+
+function renderAll() {
+  const perfilId = sel.value;
+  if (!perfilId) {
+    document.getElementById('kpiTiempo').textContent = '—';
+    document.getElementById('kpiDone').textContent = '—';
+    document.getElementById('kpiRate').textContent = '—';
+    document.getElementById('kpiFails').textContent = '—';
+    document.getElementById('tablaWrap').innerHTML = '<div class="empty"><div class="ico">👤</div>No hay estudiantes visibles para tu sesión.</div>';
+    ['actividad', 'tiempo', 'evolucion'].forEach(destroyChart);
+    return;
+  }
+  if (!M.puedeVerPerfil(perfilId)) {
+    document.getElementById('tablaWrap').innerHTML = '<div class="empty"><div class="ico">🚫</div>No tienes permiso para ver este perfil.</div>';
+    return;
+  }
+  M.setPerfilActivo(perfilId);
+  syncAvatar();
+  renderResumen(perfilId);
+  renderActividad(perfilId);
+  renderTiempo(perfilId);
+  renderEvolucion(perfilId);
+  renderTabla(perfilId);
+}
+
+sel.addEventListener('change', renderAll);
+
+document.getElementById('btnExport').addEventListener('click', () => {
+  if (!sel.value) return;
+  M.exportJSON(sel.value);
+});
+
+document.getElementById('btnReset').addEventListener('click', () => {
+  if (!sel.value) return;
+  const perfiles = M.getPerfiles();
+  const p = perfiles.find(x => x.id === sel.value);
+  if (!p) return;
+  if (confirm('¿Borrar TODAS las métricas de ' + p.nombre + '?\nEsta acción no se puede deshacer (el perfil se mantiene).')) {
+    M.borrarDatosPerfil(sel.value);
+    renderAll();
+  }
+});
+
+renderPerfilSelect();
+renderAll();
+</script>
+</body>
+</html>

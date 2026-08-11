@@ -1,0 +1,2690 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Lectoescritura · Virtual Horizon</title>
+<script src="assets/js/seed.js"></script>
+<script src="assets/js/metrics.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --navy: #1e3a5f;
+    --navy-soft: #334d70;
+    --teal: #c8202d;
+    --teal-dark: #9b1a23;
+    --green: #22c55e;
+    --green-dark: #16a34a;
+    --green-border: #86efac;
+    --green-soft: #f0fdf4;
+    --vowel-a: #ef4444;
+    --vowel-e: #eab308;
+    --vowel-i: #3b82f6;
+    --vowel-o: #22c55e;
+    --vowel-u: #f97316;
+    --error: #ef4444;
+    --error-dark: #dc2626;
+    --text: #1f2937;
+    --text-soft: #6b7280;
+    --border-soft: #e5e7eb;
+  }
+  body {
+    font-family: -apple-system, "Segoe UI Variable", "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 18px;
+    overflow-x: hidden;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  .app {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* ========== HEADER ========== */
+  .app-header {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 14px 22px;
+    box-shadow: 0 2px 12px rgba(30, 58, 95, 0.06);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 14px;
+    border: 1px solid var(--border-soft);
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a78bfa 0%, #6366f1 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3);
+  }
+  .app-title {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: -0.01em;
+  }
+  .app-title small {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-soft);
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+  .stats {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    background: var(--green-soft);
+    border: 1px solid var(--green-border);
+    border-radius: 14px;
+    padding: 6px 14px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    color: var(--text);
+  }
+  .stat .num { color: var(--green-dark); font-weight: 700; }
+  .top-tabs {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  .top-tab {
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-soft);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+  .top-tab:hover { color: var(--navy); background: var(--green-soft); }
+  .top-tab.active {
+    color: var(--navy);
+    border-bottom: 2px solid var(--teal);
+    border-radius: 0;
+    padding-bottom: 4px;
+  }
+
+  /* ========== TOGGLE HAMBURGUESA + NAV ========== */
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--navy);
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    box-shadow: 0 1px 3px rgba(30, 58, 95, 0.04);
+    transition: all 0.15s;
+    gap: 12px;
+  }
+  .nav-toggle:hover {
+    border-color: var(--navy-soft);
+    box-shadow: 0 2px 6px rgba(30, 58, 95, 0.08);
+  }
+  .nav-toggle .nav-current {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  /* Ícono hamburguesa (3 rayas) que se transforma en X cuando se expande */
+  .hamburger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 22px; height: 16px;
+    cursor: pointer;
+  }
+  .hamburger span {
+    display: block;
+    height: 2.5px;
+    width: 100%;
+    background: var(--navy);
+    border-radius: 2px;
+    transition: all 0.25s ease;
+    transform-origin: center;
+  }
+  .nav-toggle:not(.collapsed) .hamburger span:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .nav-toggle:not(.collapsed) .hamburger span:nth-child(2) {
+    opacity: 0;
+  }
+  .nav-toggle:not(.collapsed) .hamburger span:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+  .nav-toggle .nav-badge {
+    background: var(--navy);
+    color: white;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+  .nav-toggle .nav-label {
+    color: var(--navy);
+  }
+  .nav-toggle .arrow {
+    transition: transform 0.25s ease;
+    color: var(--text-soft);
+    font-size: 0.8rem;
+    margin-left: 6px;
+  }
+  .nav-toggle.collapsed .arrow { transform: rotate(-90deg); }
+  .nav-toggle .progress-mini {
+    background: var(--green-soft);
+    color: var(--green-dark);
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-left: auto;
+  }
+
+  /* ========== TASK NAV (TABS) ========== */
+  .task-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+    gap: 8px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: max-height 0.35s ease, opacity 0.25s ease, margin-bottom 0.3s ease;
+    max-height: 360px;
+  }
+  .task-nav.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-bottom: 0;
+    pointer-events: none;
+  }
+  .task-tab {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 10px 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    position: relative;
+  }
+  .task-tab:hover {
+    border-color: var(--navy-soft);
+    color: var(--navy);
+    transform: translateY(-1px);
+  }
+  .task-tab.active {
+    background: var(--navy);
+    color: white;
+    border-color: var(--navy);
+    box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
+  }
+  .task-tab .num {
+    font-size: 1.3rem;
+    line-height: 1;
+    font-weight: 800;
+  }
+  .task-tab.completed::after {
+    content: '✓';
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 22px;
+    height: 22px;
+    background: var(--green);
+    color: white;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ========== TASK SECTIONS ========== */
+  .task-section {
+    display: none;
+    background: var(--surface);
+    border-radius: 22px;
+    padding: 28px 24px;
+    box-shadow: 0 2px 14px rgba(30, 58, 95, 0.06);
+    border: 1px solid var(--border-soft);
+    margin-bottom: 14px;
+    animation: fadeIn 0.35s ease;
+  }
+  .task-section.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .task-title {
+    font-size: clamp(1.3rem, 2.6vw, 1.7rem);
+    text-align: center;
+    color: var(--navy);
+    margin-bottom: 4px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .task-instruction {
+    display: block;
+    text-align: center;
+    font-size: 0.98rem;
+    color: var(--text-soft);
+    margin: 0 auto 22px;
+    font-weight: 500;
+  }
+  .placeholder-msg {
+    text-align: center;
+    padding: 44px 20px;
+    color: var(--text-soft);
+    font-size: 1rem;
+    background: #fafaf6;
+    border-radius: 16px;
+    border: 1px dashed #d4d4d0;
+  }
+  .placeholder-msg .icon { font-size: 2.6rem; display: block; margin-bottom: 8px; }
+  .placeholder-msg code {
+    background: var(--green-soft);
+    color: var(--green-dark);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.92em;
+  }
+
+  /* ========== TASK 1 (VOCALES) — CARDS ========== */
+  .words-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+    margin-bottom: 20px;
+  }
+  .word-card {
+    background: var(--surface);
+    border-radius: 18px;
+    padding: 14px;
+    border: 2px solid var(--green-border);
+    transition: all 0.25s;
+  }
+  .word-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(34, 197, 94, 0.15);
+  }
+  .image-box {
+    border-radius: 14px;
+    background: white;
+    border: 1px solid var(--border-soft);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 220px;
+    margin-bottom: 14px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+    overflow: hidden;
+  }
+  .image-box:hover {
+    border-color: var(--green-border);
+    box-shadow: inset 0 0 0 2px var(--green-soft);
+  }
+  .image-box svg, .image-box img {
+    max-height: 200px;
+    max-width: 200px;
+    object-fit: contain;
+  }
+  .emoji-fallback {
+    font-size: 5rem;
+    line-height: 1;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+  }
+  .gallery-item .emoji-fallback,
+  .pair-image .emoji-fallback,
+  .colorize-target .emoji-fallback { font-size: inherit; }
+  .image-box::after {
+    content: '▶';
+    position: absolute;
+    bottom: 8px; right: 8px;
+    width: 36px; height: 36px;
+    background: var(--teal);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    padding-left: 3px;
+    box-shadow: 0 3px 8px rgba(200, 32, 45, 0.35);
+    pointer-events: none;
+    transition: all 0.2s;
+  }
+  .image-box:hover::after {
+    transform: scale(1.15);
+    background: var(--teal-dark);
+  }
+  .image-box.speaking::after {
+    background: var(--vowel-e);
+    animation: pulse 0.7s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.18); }
+  }
+  .word-label {
+    text-align: center;
+    font-size: 1.15rem;
+    color: var(--navy);
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+    text-transform: lowercase;
+  }
+  .btn-syllable {
+    display: flex;
+    margin: 0 auto 12px;
+    background: var(--surface);
+    border: 1px solid var(--teal);
+    color: var(--teal-dark);
+    padding: 5px 14px;
+    border-radius: 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    align-items: center;
+    gap: 5px;
+  }
+  .btn-syllable:hover { background: var(--teal); color: white; }
+  .vowels-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .vowel {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: none;
+    background: #f3f4f6;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #9ca3af;
+    cursor: pointer;
+    transition: all 0.25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    font-family: inherit;
+    box-shadow: inset 0 0 0 2px #d1d5db;
+    text-transform: lowercase;
+  }
+  /* Teclado virtual (Tarea 2): vocales SIEMPRE coloreadas como referencia */
+  .vowel-keypad .vowel[data-vowel="a"] { background: var(--vowel-a); color: white; box-shadow: 0 2px 6px rgba(239, 68, 68, 0.35); }
+  .vowel-keypad .vowel[data-vowel="e"] { background: var(--vowel-e); color: white; box-shadow: 0 2px 6px rgba(234, 179, 8, 0.35); }
+  .vowel-keypad .vowel[data-vowel="i"] { background: var(--vowel-i); color: white; box-shadow: 0 2px 6px rgba(59, 130, 246, 0.35); }
+  .vowel-keypad .vowel[data-vowel="o"] { background: var(--vowel-o); color: white; box-shadow: 0 2px 6px rgba(34, 197, 94, 0.35); }
+  .vowel-keypad .vowel[data-vowel="u"] { background: var(--vowel-u); color: white; box-shadow: 0 2px 6px rgba(249, 115, 22, 0.35); }
+
+  /* Modo "colorea" (Tarea 1): vocales empiezan grises y se colorean al acertar */
+  .vowels-paint .vowel.correct[data-vowel="a"] { background: var(--vowel-a); color: white; }
+  .vowels-paint .vowel.correct[data-vowel="e"] { background: var(--vowel-e); color: white; }
+  .vowels-paint .vowel.correct[data-vowel="i"] { background: var(--vowel-i); color: white; }
+  .vowels-paint .vowel.correct[data-vowel="o"] { background: var(--vowel-o); color: white; }
+  .vowels-paint .vowel.correct[data-vowel="u"] { background: var(--vowel-u); color: white; }
+
+  .vowel:hover:not(.locked) {
+    transform: scale(1.15) translateY(-2px);
+    filter: brightness(1.05);
+  }
+  .vowel.correct {
+    animation: bounce 0.5s ease;
+    box-shadow: 0 0 0 3px white, 0 0 0 5px var(--green);
+  }
+  .vowel.wrong {
+    animation: shake 0.5s ease;
+    box-shadow: 0 0 0 3px white, 0 0 0 5px var(--error-dark);
+    background: #fee2e2;
+    color: var(--error-dark);
+  }
+  .vowel.locked {
+    cursor: default;
+    opacity: 0.85;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3) rotate(8deg); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-7px); }
+    75% { transform: translateX(7px); }
+  }
+
+  /* ========== PROGRESS DOTS (1 de N) ========== */
+  .task-progress {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .progress-text {
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .progress-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .progress-dots .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border-soft);
+    transition: all 0.3s ease;
+  }
+  .progress-dots .dot.active {
+    width: 30px;
+    border-radius: 5px;
+    background: var(--navy);
+  }
+  .progress-dots .dot.done {
+    background: var(--green);
+  }
+  .task-section.featured .progress-text { color: rgba(255,255,255,0.7); }
+  .task-section.featured .progress-dots .dot { background: rgba(255,255,255,0.2); }
+  .task-section.featured .progress-dots .dot.active { background: white; }
+  .task-section.featured .progress-dots .dot.done { background: #4ade80; }
+
+  /* Single-card layout */
+  .single-stage {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  /* Cuando hay un single-stage, anula el grid para que los progress-dots y la card queden centrados verticalmente */
+  .words-grid:has(.single-stage) {
+    display: block;
+  }
+  .words-grid:has(.single-stage) > .task-progress {
+    margin-bottom: 18px;
+  }
+  .word-card.single {
+    max-width: 520px;
+    width: 100%;
+    padding: 24px;
+  }
+  .word-card.single .image-box {
+    height: 320px;
+  }
+  .word-card.single .image-box img,
+  .word-card.single .image-box svg {
+    max-height: 290px;
+    max-width: 290px;
+  }
+  .word-card.single .word-label {
+    font-size: 1.5rem;
+    margin-bottom: 14px;
+  }
+  .word-card.single .vowel {
+    width: 56px;
+    height: 56px;
+    font-size: 1.4rem;
+  }
+  .word-card.single .vowel-input,
+  .word-card.single .letter-blank {
+    width: 50px; height: 58px;
+    font-size: 1.6rem;
+  }
+  .word-card.single .letter-tile {
+    width: 46px; height: 58px;
+    font-size: 1.45rem;
+  }
+  .word-card.single .syllable-num {
+    width: 52px; height: 52px;
+    font-size: 1.3rem;
+  }
+  .word-card.single .draggable-letter {
+    width: 46px; height: 56px;
+    font-size: 1.35rem;
+  }
+
+  /* ========== TAREA 2: SLOTS + KEYPAD VIRTUAL ========== */
+  .vowel-slots {
+    margin-bottom: 18px;
+  }
+  .vowel-slot {
+    width: 56px; height: 68px;
+    border: 3px dashed var(--border-soft);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--navy);
+    background: white;
+    text-transform: lowercase;
+    transition: all 0.25s;
+  }
+  .vowel-slot.correct {
+    border-style: solid;
+    border-color: var(--green);
+    background: var(--green-soft);
+    color: var(--green-dark);
+    animation: bounce 0.45s ease;
+  }
+  .vowel-slot.shake-hint {
+    animation: shake 0.4s ease;
+    border-color: var(--error);
+  }
+  .vowel-keypad {
+    margin-top: 8px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--border-soft);
+  }
+  .vowel-keypad .vowel.wrong {
+    animation: shake 0.4s ease;
+    box-shadow: 0 0 0 3px white, 0 0 0 5px var(--error-dark);
+  }
+
+  /* ========== TAREAS 2-3 (legacy): INPUT DE TEXTO ========== */
+  .vowel-input {
+    width: 42px; height: 50px;
+    border: 2px solid var(--border-soft);
+    background: white;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    font-family: inherit;
+    text-transform: lowercase;
+    color: var(--navy);
+    transition: all 0.2s;
+  }
+  .vowel-input:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(200, 32, 45, 0.15);
+  }
+  .vowel-input.correct {
+    background: var(--green-soft);
+    border-color: var(--green);
+    color: var(--green-dark);
+    animation: bounce 0.4s ease;
+  }
+  .vowel-input.wrong {
+    background: #fee2e2;
+    border-color: var(--error);
+    color: var(--error-dark);
+    animation: shake 0.4s ease;
+  }
+  .input-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  /* ========== TAREA 3: HUECOS (PALABRA CON _) ========== */
+  .word-blanks {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+  }
+  .letter-tile {
+    width: 38px; height: 46px;
+    background: var(--navy);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-transform: lowercase;
+  }
+  .letter-blank {
+    width: 38px; height: 46px;
+    border: 2px dashed var(--teal);
+    background: white;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: inherit;
+    color: var(--navy);
+    text-transform: lowercase;
+  }
+  .letter-blank:focus {
+    outline: none;
+    border-style: solid;
+    box-shadow: 0 0 0 3px rgba(200, 32, 45, 0.2);
+  }
+  .letter-blank.correct {
+    background: var(--green);
+    border-color: var(--green-dark);
+    color: white;
+  }
+  .letter-blank.wrong {
+    background: #fee2e2;
+    border-color: var(--error);
+    color: var(--error-dark);
+    animation: shake 0.4s ease;
+  }
+
+  /* ========== TAREA 4 (NUEVA): REORDENAR LETRAS EN LÍNEA ========== */
+  .reorder-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 12px;
+    margin-top: 12px;
+    background: var(--green-soft);
+    border: 2px solid var(--green-border);
+    border-radius: 14px;
+    flex-wrap: wrap;
+    transition: all 0.3s;
+  }
+  .reorder-row.correct {
+    background: #dcfce7;
+    border-color: var(--green-dark);
+    animation: bounce 0.5s ease;
+  }
+  .reorder-letter {
+    width: 50px; height: 60px;
+    background: white;
+    border: 2px solid var(--navy);
+    color: var(--navy);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: grab;
+    user-select: none;
+    transition: all 0.18s;
+  }
+  .reorder-letter:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(30, 58, 95, 0.18);
+  }
+  .reorder-letter:active { cursor: grabbing; }
+  .reorder-letter.dragging { opacity: 0.4; transform: scale(0.95); }
+  .reorder-letter.drop-target {
+    background: var(--vowel-e);
+    color: white;
+    border-color: var(--accent-dark, #f59e0b);
+    transform: scale(1.1);
+  }
+  .reorder-letter.selected {
+    background: var(--vowel-i);
+    color: white;
+    border-color: var(--vowel-i);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    transform: scale(1.08);
+  }
+  .reorder-row.correct .reorder-letter {
+    background: var(--green);
+    color: white;
+    border-color: var(--green-dark);
+  }
+
+  /* ========== TAREA 4 (LEGACY drop-zone): ORDENAR LETRAS ========== */
+  .scramble-area {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    margin-top: 10px;
+  }
+  .drop-zone {
+    display: flex;
+    gap: 6px;
+    min-height: 52px;
+    padding: 6px;
+    background: var(--green-soft);
+    border: 2px dashed var(--green);
+    border-radius: 12px;
+    min-width: 200px;
+    justify-content: center;
+    align-items: center;
+  }
+  .drop-zone.over { background: #dcfce7; }
+  .scramble-bank {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 6px;
+  }
+  .draggable-letter {
+    width: 40px; height: 48px;
+    background: white;
+    border: 2px solid var(--navy);
+    color: var(--navy);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: grab;
+    user-select: none;
+    text-transform: lowercase;
+    transition: all 0.15s;
+  }
+  .draggable-letter:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(30,58,95,0.15); }
+  .draggable-letter:active { cursor: grabbing; }
+  .draggable-letter.placed {
+    background: var(--navy);
+    color: white;
+  }
+  .draggable-letter.dragging { opacity: 0.5; }
+
+  /* ========== TAREA 5: NÚMERO DE SÍLABAS ========== */
+  .syllable-counter {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: 10px;
+    background: var(--green-soft);
+    padding: 8px;
+    border-radius: 14px;
+    border: 2px solid var(--green-border);
+  }
+  .syllable-num {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: white;
+    color: var(--navy);
+    font-size: 1.15rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .syllable-num:hover:not(.locked) {
+    border-color: var(--navy);
+    transform: scale(1.1);
+  }
+  .syllable-num.correct {
+    background: var(--green);
+    color: white;
+    border-color: var(--green-dark);
+    animation: bounce 0.4s ease;
+  }
+  .syllable-num.wrong {
+    background: var(--error);
+    color: white;
+    border-color: var(--error-dark);
+    animation: shake 0.4s ease;
+  }
+  .syllable-num.locked { cursor: default; }
+
+  /* ========== TAREA 6: GALERÍA /rr/ ========== */
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+    margin-bottom: 18px;
+    max-width: 820px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .gallery-item {
+    background: white;
+    border: 2px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .gallery-item:hover { transform: translateY(-2px); border-color: var(--navy-soft); }
+  .gallery-item .visual {
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    margin-bottom: 6px;
+  }
+  .gallery-item .visual img,
+  .gallery-item .visual svg { max-height: 100px; max-width: 100px; }
+  .gallery-item .label {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--text-soft);
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+  }
+  .gallery-item.selected {
+    border-color: var(--green);
+    background: var(--green-soft);
+  }
+  .gallery-item.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 6px; right: 6px;
+    width: 26px; height: 26px;
+    background: var(--green);
+    color: white;
+    border-radius: 50%;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+  }
+  .gallery-item.revealed-correct {
+    border-color: var(--green);
+    background: #dcfce7;
+  }
+  .gallery-item.revealed-wrong {
+    border-color: var(--error);
+    background: #fee2e2;
+    opacity: 0.6;
+  }
+
+  /* ========== TAREA 7: UNIR SÍLABAS ========== */
+  .pair-board {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: 14px;
+    align-items: center;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .pair-board .col-header {
+    text-align: center;
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 0.95rem;
+    background: var(--green-soft);
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+  .syll-bank {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .syll-tile {
+    background: white;
+    border: 2px solid var(--navy);
+    color: var(--navy);
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 700;
+    text-align: center;
+    cursor: grab;
+    text-transform: lowercase;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .syll-tile:hover { transform: translateY(-1px); box-shadow: 0 3px 8px rgba(30,58,95,0.15); }
+  .syll-tile.placed {
+    background: var(--navy);
+    color: white;
+    cursor: default;
+  }
+  .syll-tile.dragging { opacity: 0.4; }
+  .pair-row {
+    display: contents;
+  }
+  .pair-target {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--green-soft);
+    border: 2px dashed var(--green);
+    border-radius: 12px;
+    padding: 8px;
+    min-height: 50px;
+    justify-content: center;
+  }
+  .pair-target.over { background: #dcfce7; }
+  .pair-target.correct {
+    background: var(--green);
+    border-style: solid;
+    border-color: var(--green-dark);
+  }
+  .pair-target.correct .syll-slot { color: white; background: var(--green-dark); border-color: var(--green-dark); }
+  .syll-slot {
+    width: 56px;
+    background: white;
+    border: 2px solid var(--green);
+    border-radius: 8px;
+    padding: 6px 4px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--navy);
+    text-transform: lowercase;
+    font-size: 0.9rem;
+    min-height: 36px;
+  }
+  .pair-image {
+    background: var(--green-soft);
+    border-radius: 12px;
+    padding: 8px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.4rem;
+  }
+  .pair-image img, .pair-image svg { max-height: 50px; max-width: 50px; }
+
+  /* ========== TAREA 7 (NUEVA): UN PAR A LA VEZ ========== */
+  .single-pair {
+    max-width: 320px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .pair-image-large {
+    background: white;
+    border: 2px solid var(--green-border);
+    border-radius: 16px;
+    padding: 16px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .pair-image-large:hover { border-color: var(--green); }
+  .pair-image-large img, .pair-image-large svg { max-height: 160px; max-width: 160px; }
+  .task-section.featured .pair-image-large {
+    background: white;
+    border: none;
+  }
+  .pair-slots {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .pair-slots .syll-slot {
+    width: 70px; min-height: 56px;
+    font-size: 1.2rem;
+  }
+  .pair-slots .syll-slot.correct {
+    background: var(--green);
+    color: white;
+    border-color: var(--green-dark);
+    animation: bounce 0.5s ease;
+  }
+  .pair-slots .syll-slot.over {
+    background: #fef3c7;
+    border-color: var(--vowel-e);
+  }
+  .task-section.featured .pair-slots .syll-slot.correct {
+    background: #4ade80;
+    color: #064e3b;
+  }
+  .pair-banks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  .pair-banks .syll-bank { gap: 6px; }
+
+  /* ========== TAREA 8: COLOREA SÍLABAS ========== */
+  .colorize-target {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .colorize-target .visual {
+    font-size: 3rem;
+    margin-bottom: 4px;
+  }
+  .colorize-target .visual img,
+  .colorize-target .visual svg { max-height: 80px; max-width: 80px; }
+  .colorize-target .name {
+    font-weight: 700;
+    color: var(--navy);
+    letter-spacing: 2px;
+    text-transform: lowercase;
+  }
+  .colorize-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 8px;
+    max-width: 480px;
+    margin: 0 auto 16px;
+  }
+  .colorize-syll {
+    background: white;
+    border: 2px solid var(--navy);
+    color: var(--navy);
+    border-radius: 12px;
+    padding: 14px 8px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: lowercase;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: all 0.2s;
+  }
+  .colorize-syll:hover:not(.locked) { transform: translateY(-2px); }
+  .colorize-syll.correct {
+    background: var(--green);
+    border-color: var(--green-dark);
+    color: white;
+    animation: bounce 0.4s ease;
+  }
+  .colorize-syll.wrong {
+    animation: shake 0.4s ease;
+  }
+  .colorize-syll.locked { cursor: default; }
+
+  /* ========== VARIANTE FEATURED (DARK TEAL "ENCUENTRA Y COMBINA") ========== */
+  .task-section.featured {
+    background: linear-gradient(160deg, #0f3d3d 0%, #134e4a 100%);
+    border: none;
+    color: white;
+  }
+  .task-section.featured .task-title {
+    color: white;
+  }
+  .task-section.featured .task-instruction {
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .task-section.featured .hint {
+    color: rgba(255, 255, 255, 0.5);
+  }
+  .task-section.featured .col-header {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    font-size: 1.1rem;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px;
+    padding: 0;
+  }
+  .task-section.featured .pair-board {
+    grid-template-columns: 60px 60px 16px 80px;
+    gap: 10px;
+    align-items: center;
+    max-width: 360px;
+  }
+  .task-section.featured .pair-target {
+    background: transparent;
+    border: none;
+    padding: 0;
+    min-height: auto;
+    display: contents;
+  }
+  .task-section.featured .syll-slot {
+    background: white;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #0f3d3d;
+    border-radius: 10px;
+    width: 100%;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .task-section.featured .pair-target.correct .syll-slot {
+    background: #4ade80;
+    color: #064e3b;
+    border-color: #22c55e;
+  }
+  .task-section.featured .pair-image {
+    background: white;
+    border-radius: 10px;
+    height: 56px;
+    width: 100%;
+    padding: 4px;
+  }
+  .task-section.featured .pair-connector {
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .task-section.featured .syll-bank {
+    gap: 6px;
+  }
+  .task-section.featured .syll-tile {
+    background: white;
+    color: #0f3d3d;
+    border-color: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  }
+  .task-section.featured .syll-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  }
+  .task-section.featured .syll-tile.placed {
+    background: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.6);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+  .task-section.featured .btn-check {
+    background: #2563eb;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  }
+  .task-section.featured .btn-check:hover {
+    background: #1d4ed8;
+  }
+
+  /* ========== BOTÓN COMPROBAR ========== */
+  .btn-check {
+    display: block;
+    margin: 18px auto 0;
+    background: var(--teal);
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-check:hover { background: var(--teal-dark); transform: translateY(-1px); }
+
+  /* ========== FOOTER CONTROLS ========== */
+  .footer-controls {
+    background: var(--surface);
+    border-radius: 20px;
+    padding: 12px 18px;
+    box-shadow: 0 2px 12px rgba(30, 58, 95, 0.06);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    border: 1px solid var(--border-soft);
+  }
+  .btn {
+    padding: 9px 20px;
+    font-size: 0.95rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: inherit;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .btn-nav {
+    background: var(--navy);
+    color: white;
+  }
+  .btn-nav:hover:not(:disabled) {
+    background: var(--navy-soft);
+    transform: translateY(-1px);
+  }
+  .btn-reset {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border-soft);
+  }
+  .btn-reset:hover { background: #fafaf6; }
+  .btn-sound {
+    background: var(--teal);
+    color: white;
+  }
+  .btn-sound:hover { background: var(--teal-dark); }
+
+  /* ========== CELEBRATION ========== */
+  .celebration {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    background: rgba(30, 58, 95, 0.4);
+  }
+  .celebration.active { display: flex; }
+  .celebration-msg {
+    background: var(--surface);
+    padding: 30px 46px;
+    border-radius: 24px;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--navy);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: popIn 0.5s ease;
+    text-align: center;
+    border: 3px solid var(--green);
+    max-width: 90vw;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0) rotate(-180deg); }
+    70% { transform: scale(1.12) rotate(6deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+  .confetti {
+    position: fixed;
+    width: 10px; height: 10px;
+    pointer-events: none;
+    animation: fall 2.5s linear forwards;
+  }
+  @keyframes fall {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ========== UTILITIES ========== */
+  .center { text-align: center; }
+  .hint {
+    text-align: center;
+    margin-top: 14px;
+    font-size: 0.86rem;
+    color: var(--text-soft);
+  }
+
+  /* ========== RESPONSIVE (móvil/tablet) ========== */
+  @media (max-width: 640px) {
+    body { padding: 10px; }
+    .app-header { padding: 10px 14px; gap: 10px; }
+    .avatar { width: 36px; height: 36px; font-size: 0.95rem; }
+    .app-title { font-size: 1rem; }
+    .app-title small { font-size: 0.7rem; }
+    .stat { padding: 5px 10px; font-size: 0.85rem; }
+    .task-nav {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .task-tab { padding: 8px 4px; font-size: 0.72rem; }
+    .task-tab .num { font-size: 1.1rem; }
+    .task-section { padding: 18px 14px; }
+    .words-grid { grid-template-columns: 1fr; gap: 14px; }
+    .word-card { padding: 14px; }
+    .image-box { height: 180px; }
+    .image-box svg, .image-box img { max-height: 160px; max-width: 160px; }
+    .vowel { width: 52px; height: 52px; font-size: 1.3rem; }
+    .footer-controls { padding: 10px 14px; gap: 8px; }
+    .btn { padding: 10px 16px; font-size: 0.9rem; }
+  }
+  @media (max-width: 380px) {
+    .task-nav { grid-template-columns: repeat(4, 1fr); }
+    .task-tab span:not(.num) { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="avatar" style="background: linear-gradient(135deg, var(--teal) 0%, var(--navy) 100%); font-size: 0.95rem; letter-spacing: -0.02em;">RF</div>
+      <div>
+        <div class="app-title">Reuven
+          <small style="color: var(--teal); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.62rem;">Enseñamos a Pensar</small>
+        </div>
+      </div>
+    </div>
+    <nav class="top-tabs">
+      <a class="top-tab" href="landing.html">Inicio</a>
+      <a class="top-tab active">Actividades</a>
+      <a class="top-tab" href="login-ninos.html" title="Cambiar de perfil">← Salir</a>
+    </nav>
+    <div class="stats">
+      <div class="stat">⭐ <span class="num" id="globalScore">0</span></div>
+      <div class="stat">🎯 <span class="num" id="globalProgress">0</span>/8</div>
+    </div>
+  </header>
+
+  <!-- TASK NAVIGATION TOGGLE + TABS -->
+  <button class="nav-toggle collapsed" id="navToggle" type="button">
+    <span class="nav-current">
+      <span class="hamburger" aria-hidden="true">
+        <span></span><span></span><span></span>
+      </span>
+      <span class="nav-badge" id="navBadge">1</span>
+      <span class="nav-label" id="navLabel">Vocales</span>
+    </span>
+    <span class="progress-mini" id="navProgress">0/8</span>
+    <span class="arrow">▼</span>
+  </button>
+  <nav class="task-nav collapsed" id="taskNav"></nav>
+
+  <!-- TASK SECTIONS -->
+  <main id="taskContainer">
+
+    <!-- ============ TAREA 1: COLOREA LAS VOCALES ============ -->
+    <section class="task-section active" data-task="1">
+      <h2 class="task-title">🎨 Colorea las Vocales</h2>
+      <div class="center">
+        <p class="task-instruction">Toca las vocales que suenan en cada palabra</p>
+      </div>
+      <div class="words-grid" id="task1Grid"></div>
+      <p class="hint">💡 Pista: escucha la palabra y toca todas sus vocales</p>
+    </section>
+
+    <!-- ============ TAREA 2: ESCRIBE LAS VOCALES ============ -->
+    <section class="task-section" data-task="2">
+      <h2 class="task-title">✏️ Escribe las Vocales</h2>
+      <p class="task-instruction">Escribe las vocales que suenan en cada palabra</p>
+      <div class="words-grid" id="task2Grid"></div>
+      <p class="hint">💡 Click en la imagen para escuchar · 🐢 para silabear</p>
+    </section>
+
+    <!-- ============ TAREA 3: ESCRIBE CON VOCALES (HUECOS) ============ -->
+    <section class="task-section" data-task="3">
+      <h2 class="task-title">🔤 Escribe con Vocales</h2>
+      <p class="task-instruction">Completa la palabra escribiendo las vocales que faltan</p>
+      <div class="words-grid" id="task3Grid"></div>
+      <p class="hint">💡 Escribe la vocal en cada cuadrito</p>
+    </section>
+
+    <!-- ============ TAREA 4: ORDENA LAS LETRAS ============ -->
+    <section class="task-section" data-task="4">
+      <h2 class="task-title">🔀 Ordena las Letras</h2>
+      <p class="task-instruction">Arrastra (o haz click) en las letras para formar la palabra</p>
+      <div class="words-grid" id="task4Grid"></div>
+      <p class="hint">💡 Ojo: hay una letra de más que sobra</p>
+    </section>
+
+    <!-- ============ TAREA 5: NÚMERO DE SÍLABAS ============ -->
+    <section class="task-section" data-task="5">
+      <h2 class="task-title">🔢 ¿Cuántas Sílabas?</h2>
+      <p class="task-instruction">Marca el número de sílabas que tiene cada palabra</p>
+      <div class="words-grid" id="task5Grid"></div>
+      <p class="hint">💡 Usa 🐢 Silabear si necesitas oírla dividida</p>
+    </section>
+
+    <!-- ============ TAREA 6: SONIDO R FUERTE ============ -->
+    <section class="task-section" data-task="6">
+      <h2 class="task-title">👂 Sonido de la R fuerte</h2>
+      <p class="task-instruction">Toca las imágenes que empiezan con el sonido fuerte de la R</p>
+      <div class="gallery-grid" id="task6Grid"></div>
+      <button class="btn-check" id="task6Check">Comprobar</button>
+      <p class="hint">💡 Click en cada imagen para oír su nombre antes de elegir</p>
+    </section>
+
+    <!-- ============ TAREA 7: ENCUENTRA Y COMBINA ============ -->
+    <section class="task-section featured" data-task="7">
+      <h2 class="task-title">Encuentra y Combina</h2>
+      <p class="task-instruction">Une las sílabas para formar las palabras</p>
+      <div id="task7Board"></div>
+      <p class="hint">Click o arrastra las sílabas hacia los huecos</p>
+    </section>
+
+    <!-- ============ TAREA 8: COLOREA LAS SÍLABAS ============ -->
+    <section class="task-section" data-task="8">
+      <h2 class="task-title">🎨 Colorea las Sílabas</h2>
+      <p class="task-instruction">Selecciona solo las sílabas que forman la palabra</p>
+      <div id="task8Container"></div>
+      <p class="hint">💡 Hay sílabas que sobran, ¡no las marques!</p>
+    </section>
+
+  </main>
+
+  <!-- FOOTER CONTROLS -->
+  <footer class="footer-controls">
+    <button class="btn btn-nav" id="btnPrev">← Anterior</button>
+    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center;">
+      <button class="btn btn-sound" id="btnSound">🔊 Sonido ON</button>
+      <button class="btn btn-reset" id="btnReset">🔄 Reiniciar tarea</button>
+    </div>
+    <button class="btn btn-nav" id="btnNext">Siguiente →</button>
+  </footer>
+
+</div>
+
+<!-- CELEBRATION OVERLAY -->
+<div class="celebration" id="celebration">
+  <div class="celebration-msg" id="celebrationMsg">¡Muy bien! 🎉</div>
+</div>
+
+<script>
+/* ============================================================
+   ESTADO GLOBAL Y UTILIDADES COMPARTIDAS
+   ============================================================ */
+
+const state = {
+  currentTask: 1,
+  totalTasks: 8,
+  globalScore: 0,
+  completedTasks: new Set(),
+  soundEnabled: true,
+  audioCtx: null,
+  taskState: {}
+};
+
+const TASKS_META = [
+  { id: 1, num: '1', label: 'Vocales', icon: '🎨' },
+  { id: 2, num: '2', label: 'Escribir', icon: '✏️' },
+  { id: 3, num: '3', label: 'Huecos', icon: '🔤' },
+  { id: 4, num: '4', label: 'Ordenar', icon: '🔀' },
+  { id: 5, num: '5', label: 'Sílabas', icon: '🔢' },
+  { id: 6, num: '6', label: 'Sonido R', icon: '👂' },
+  { id: 7, num: '7', label: 'Unir', icon: '🧩' },
+  { id: 8, num: '8', label: 'Colorear', icon: '🎨' }
+];
+
+const M = window.ReuvenMetrics;
+function trackOk(n, item)   { if (M) M.recordAttempt(n, { correcto: true,  item: item || null }); }
+function trackFail(n, item) { if (M) M.recordAttempt(n, { correcto: false, item: item || null }); }
+
+/* ---------- AUDIO ---------- */
+function getAudio() {
+  if (!state.audioCtx) {
+    state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return state.audioCtx;
+}
+
+function playTone(freq, duration = 0.2, type = 'sine') {
+  if (!state.soundEnabled) return;
+  try {
+    const ctx = getAudio();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch (e) { /* ignore */ }
+}
+
+const sound = {
+  correct() {
+    playTone(523, 0.15);
+    setTimeout(() => playTone(659, 0.15), 100);
+    setTimeout(() => playTone(784, 0.2), 200);
+  },
+  wrong() { playTone(200, 0.3, 'sawtooth'); },
+  win() {
+    [523, 659, 784, 1047].forEach((n, i) =>
+      setTimeout(() => playTone(n, 0.3), i * 150)
+    );
+  },
+  click() { playTone(440, 0.05, 'square'); }
+};
+
+/* ---------- VOZ (Web Speech API) ---------- */
+const speech = {
+  voice: null,
+  voicesReady: false,
+
+  init() {
+    const sel = () => {
+      const voices = speechSynthesis.getVoices();
+      if (!voices.length) return;
+      const prefer = [
+        v => v.lang === 'es-ES' && /m[oó]nica|sabina|helena/i.test(v.name),
+        v => v.lang === 'es-MX' && /paulina|jorge/i.test(v.name),
+        v => v.lang.startsWith('es') && /google/i.test(v.name),
+        v => v.lang.startsWith('es')
+      ];
+      for (const fn of prefer) {
+        const v = voices.find(fn);
+        if (v) { this.voice = v; break; }
+      }
+      this.voicesReady = true;
+    };
+    sel();
+    if (typeof speechSynthesis !== 'undefined') {
+      speechSynthesis.onvoiceschanged = () => sel();
+    }
+  },
+
+  speak(text, opts = {}) {
+    if (!state.soundEnabled) return null;
+    if (typeof speechSynthesis === 'undefined') return null;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'es-ES';
+    if (this.voice) u.voice = this.voice;
+    u.rate = opts.rate ?? 0.95;
+    u.pitch = opts.pitch ?? 1.15;
+    u.volume = opts.volume ?? 1;
+    if (opts.onend) u.onend = opts.onend;
+    speechSynthesis.speak(u);
+    return u;
+  },
+
+  word(text, onend) { return this.speak(text, { rate: 0.9, onend }); },
+
+  letter(letter) {
+    const map = { a: 'a', e: 'e', i: 'i', o: 'o', u: 'u' };
+    const t = map[letter.toLowerCase()] || letter;
+    return this.speak(t, { rate: 0.7, pitch: 1.25 });
+  },
+
+  syllables(syllableArray) {
+    if (!state.soundEnabled || !syllableArray?.length) return;
+    speechSynthesis.cancel();
+    syllableArray.forEach((syll, i) => {
+      setTimeout(() => this.speak(syll, { rate: 0.55, pitch: 1.2 }), i * 700);
+    });
+  },
+
+  praise(big = false) {
+    const small = ['¡bien!', '¡eso!', '¡sí!', '¡genial!', '¡súper!'];
+    const grande = ['¡Excelente!', '¡Muy bien!', '¡Lo lograste!', '¡Fantástico!'];
+    const list = big ? grande : small;
+    const phrase = list[Math.floor(Math.random() * list.length)];
+    this.speak(phrase, { rate: big ? 0.95 : 1.05, pitch: 1.3 });
+  },
+
+  cancel() {
+    if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
+  }
+};
+
+/* ---------- CONFETI ---------- */
+const CONFETTI_COLORS = ['#fbbf24', '#84cc16', '#3b82f6', '#ec4899', '#a855f7', '#ef4444'];
+
+function spawnConfetti(element, count = 8) {
+  const rect = element.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  for (let i = 0; i < count; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = cx + 'px';
+    c.style.top = cy + 'px';
+    c.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    document.body.appendChild(c);
+    setTimeout(() => c.remove(), 2500);
+  }
+}
+
+function rainConfetti(count = 40) {
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.top = '-20px';
+      c.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 2500);
+    }, i * 40);
+  }
+}
+
+/* ---------- SCORE Y PROGRESO ---------- */
+function addScore(points) {
+  state.globalScore = Math.max(0, state.globalScore + points);
+  document.getElementById('globalScore').textContent = state.globalScore;
+}
+
+function markTaskComplete(taskId) {
+  if (state.completedTasks.has(taskId)) return;
+  state.completedTasks.add(taskId);
+  document.getElementById('globalProgress').textContent = state.completedTasks.size;
+  const tab = document.querySelector(`.task-tab[data-task="${taskId}"]`);
+  if (tab) tab.classList.add('completed');
+  updateNavProgress();
+  if (M) M.endTask(taskId, { completada: true });
+  if (state.completedTasks.size === state.totalTasks) {
+    setTimeout(showFinalCelebration, 600);
+  }
+}
+
+function showCelebration(message, autoCloseMs = 2500) {
+  const cel = document.getElementById('celebration');
+  document.getElementById('celebrationMsg').innerHTML = message;
+  cel.classList.add('active');
+  setTimeout(() => cel.classList.remove('active'), autoCloseMs);
+}
+
+function showFinalCelebration() {
+  sound.win();
+  rainConfetti(60);
+  setTimeout(() => speech.speak('¡Felicitaciones! Completaste todas las actividades.', { rate: 0.95, pitch: 1.25 }), 400);
+  showCelebration(
+    `¡Excelente! 🎉<br>
+     <span style="font-size:1.1rem;color:#374151">Completaste las 8 actividades</span><br>
+     <span style="font-size:1.6rem">⭐ ${state.globalScore} puntos ⭐</span>`,
+    4000
+  );
+}
+
+/* ---------- NAVEGACIÓN ENTRE TAREAS ---------- */
+function renderTaskNav() {
+  const nav = document.getElementById('taskNav');
+  nav.innerHTML = TASKS_META.map(t => `
+    <button class="task-tab${t.id === state.currentTask ? ' active' : ''}"
+            data-task="${t.id}">
+      <span class="num">${t.num}</span>
+      <span>${t.label}</span>
+    </button>
+  `).join('');
+  nav.querySelectorAll('.task-tab').forEach(btn => {
+    btn.addEventListener('click', () => goToTask(parseInt(btn.dataset.task)));
+  });
+}
+
+function goToTask(taskId) {
+  if (taskId < 1 || taskId > state.totalTasks) return;
+  speech.cancel();
+  state.currentTask = taskId;
+  if (M) M.startTask(taskId);
+  document.querySelectorAll('.task-section').forEach(s => {
+    s.classList.toggle('active', parseInt(s.dataset.task) === taskId);
+  });
+  document.querySelectorAll('.task-tab').forEach(t => {
+    t.classList.toggle('active', parseInt(t.dataset.task) === taskId);
+  });
+  document.getElementById('btnPrev').disabled = taskId === 1;
+  document.getElementById('btnNext').disabled = taskId === state.totalTasks;
+  // Actualizar info en el toggle hamburguesa
+  const meta = TASKS_META.find(t => t.id === taskId);
+  const badge = document.getElementById('navBadge');
+  const label = document.getElementById('navLabel');
+  if (badge && meta) badge.textContent = meta.num;
+  if (label && meta) label.textContent = meta.label;
+  updateNavProgress();
+  sound.click();
+}
+
+function updateNavProgress() {
+  const el = document.getElementById('navProgress');
+  if (el) el.textContent = `${state.completedTasks.size}/${state.totalTasks}`;
+}
+
+/* ============================================================
+   TAREA 1: COLOREA LAS VOCALES
+   ============================================================ */
+
+const TASK1_WORDS = [
+  {
+    name: 'ANILLO',
+    spoken: 'anillo',
+    syllables: ['a', 'ni', 'llo'],
+    vowels: ['a', 'e', 'i', 'o', 'u'],
+    correct: ['a', 'i', 'o'],
+    img: 'assets/anillo.png',
+    svg: null
+  },
+  {
+    name: 'OVEJA',
+    spoken: 'oveja',
+    syllables: ['o', 've', 'ja'],
+    vowels: ['o', 'e', 'i', 'u', 'a'],
+    correct: ['o', 'e', 'a'],
+    img: 'assets/oveja.png',
+    svg: null
+  },
+  {
+    name: 'AVIÓN',
+    spoken: 'avión',
+    syllables: ['a', 'vión'],
+    vowels: ['a', 'e', 'i', 'o', 'u'],
+    correct: ['a', 'i', 'o'],
+    img: 'assets/avion.png',
+    svg: null
+  }
+];
+
+function task1Render() {
+  const grid = document.getElementById('task1Grid');
+  grid.innerHTML = '';
+
+  if (!state.taskState[1] || state.taskState[1].currentIdx == null) {
+    state.taskState[1] = { currentIdx: 0 };
+  }
+  const ts = state.taskState[1];
+  const word = TASK1_WORDS[ts.currentIdx];
+  ts.correctNeeded = word.correct.length;
+  ts.correctSoFar = 0;
+
+  // Progress dots
+  grid.insertAdjacentHTML('beforeend', progressDots(ts.currentIdx, TASK1_WORDS.length));
+
+  // Single card stage
+  const stage = document.createElement('div');
+  stage.className = 'single-stage';
+  const visual = word.img
+    ? `<img src="${word.img}" alt="${word.name}">`
+    : word.svg;
+  stage.innerHTML = `
+    <div class="word-card single">
+      <div class="image-box">${visual}</div>
+      <button class="btn-syllable">🐢 Silabear</button>
+      <div class="vowels-row vowels-paint">
+        ${word.vowels.map(v =>
+          `<button class="vowel" data-vowel="${v}">${v}</button>`
+        ).join('')}
+      </div>
+    </div>
+  `;
+  grid.appendChild(stage);
+
+  // Pronuncia automáticamente la palabra al cargar
+  setTimeout(() => speech.word(word.spoken), 350);
+
+  stage.querySelector('.image-box').addEventListener('click', () => {
+    const box = stage.querySelector('.image-box');
+    box.classList.add('speaking');
+    speech.word(word.spoken, () => box.classList.remove('speaking'));
+  });
+  stage.querySelector('.btn-syllable').addEventListener('click', e => {
+    e.stopPropagation();
+    speech.syllables(word.syllables);
+  });
+  stage.querySelectorAll('.vowel').forEach(btn => {
+    btn.addEventListener('click', task1HandleVowel);
+  });
+}
+
+function task1HandleVowel(e) {
+  const btn = e.currentTarget;
+  if (btn.classList.contains('locked')) return;
+  const ts = state.taskState[1];
+  const word = TASK1_WORDS[ts.currentIdx];
+  const vowel = btn.dataset.vowel;
+
+  if (word.correct.includes(vowel)) {
+    btn.classList.add('correct', 'locked');
+    addScore(10);
+    ts.correctSoFar++;
+    sound.correct();
+    spawnConfetti(btn, 8);
+    speech.letter(vowel);
+    trackOk(1, word.name);
+    if (Math.random() < 0.35) setTimeout(() => speech.praise(false), 600);
+
+    if (ts.correctSoFar === ts.correctNeeded) {
+      setTimeout(() => speech.word(word.spoken), 500);
+      advanceTask(1, TASK1_WORDS.length);
+    }
+  } else {
+    btn.classList.add('wrong');
+    sound.wrong();
+    addScore(-2);
+    speech.letter(vowel);
+    trackFail(1, word.name);
+    setTimeout(() => btn.classList.remove('wrong'), 600);
+  }
+}
+
+/* ============================================================
+   DICCIONARIO COMPARTIDO DE PALABRAS
+   ============================================================ */
+
+const WORDS = {
+  anillo:   { name: 'ANILLO',   spoken: 'anillo',   syllables: ['a','ni','llo'],   emoji: '💍', img: 'assets/anillo.png' },
+  oveja:    { name: 'OVEJA',    spoken: 'oveja',    syllables: ['o','ve','ja'],    emoji: '🐑', img: 'assets/oveja.png' },
+  avion:    { name: 'AVIÓN',    spoken: 'avión',    syllables: ['a','vión'],       emoji: '✈️', img: 'assets/avion.png' },
+  pato:     { name: 'PATO',     spoken: 'pato',     syllables: ['pa','to'],        emoji: '🦆', img: 'assets/pato.png' },
+  sopa:     { name: 'SOPA',     spoken: 'sopa',     syllables: ['so','pa'],        emoji: '🍲', img: 'assets/sopa.png' },
+  gato:     { name: 'GATO',     spoken: 'gato',     syllables: ['ga','to'],        emoji: '🐱', img: 'assets/gato.png' },
+  pala:     { name: 'PALA',     spoken: 'pala',     syllables: ['pa','la'],        emoji: '🪣', img: 'assets/pala.png' },
+  pito:     { name: 'PITO',     spoken: 'pito',     syllables: ['pi','to'],        emoji: '🪈', img: 'assets/pito.png' },
+  mesa:     { name: 'MESA',     spoken: 'mesa',     syllables: ['me','sa'],        emoji: '🪑', img: 'assets/mesa.png' },
+  casa:     { name: 'CASA',     spoken: 'casa',     syllables: ['ca','sa'],        emoji: '🏠', img: 'assets/casa.png' },
+  sol:      { name: 'SOL',      spoken: 'sol',      syllables: ['sol'],            emoji: '☀️', img: 'assets/sol.png' },
+  raton:    { name: 'RATÓN',    spoken: 'ratón',    syllables: ['ra','tón'],       emoji: '🐭', startsRR: true, img: 'assets/raton.png' },
+  rosa:     { name: 'ROSA',     spoken: 'rosa',     syllables: ['ro','sa'],        emoji: '🌹', startsRR: true },
+  regla:    { name: 'REGLA',    spoken: 'regla',    syllables: ['re','gla'],       emoji: '📏', startsRR: true, img: 'assets/regla.png' },
+  rio:      { name: 'RÍO',      spoken: 'río',      syllables: ['rí','o'],         emoji: '🏞️', startsRR: true, img: 'assets/rio.png' },
+  torre:    { name: 'TORRE',    spoken: 'torre',    syllables: ['to','rre'],       emoji: '🗼', img: 'assets/torre.png' },
+  elefante: { name: 'ELEFANTE', spoken: 'elefante', syllables: ['e','le','fan','te'], emoji: '🐘', img: 'assets/elefante.png' }
+};
+
+const VOWELS_SET = new Set(['A','E','I','O','U','Á','É','Í','Ó','Ú']);
+
+function vowelsInWord(name) {
+  return [...name].filter(c => VOWELS_SET.has(c)).map(c => c.toLowerCase().normalize('NFD')[0]);
+}
+function consonantsInWord(name) {
+  return [...name].filter(c => !VOWELS_SET.has(c) && /[A-ZÑ]/i.test(c));
+}
+function getVisual(word, sizeClass = '') {
+  if (word.img) return `<img src="${word.img}" alt="${word.name}">`;
+  if (word.svg) return word.svg;
+  return `<span class="emoji-fallback ${sizeClass}">${word.emoji || '📦'}</span>`;
+}
+
+function progressDots(currentIdx, total) {
+  return `
+    <div class="task-progress">
+      <span class="progress-text">${currentIdx + 1} de ${total}</span>
+      <div class="progress-dots">
+        ${Array.from({ length: total }, (_, i) =>
+          `<span class="dot${i < currentIdx ? ' done' : i === currentIdx ? ' active' : ''}"></span>`
+        ).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function advanceTask(taskId, totalItems, delay = 1100) {
+  const ts = state.taskState[taskId];
+  ts.currentIdx = (ts.currentIdx || 0) + 1;
+  if (ts.currentIdx >= totalItems) {
+    setTimeout(() => {
+      markTaskComplete(taskId);
+      speech.praise(true);
+      showCelebration('¡Tarea completa! 🎉');
+    }, 500);
+  } else {
+    const fn = TASK_RENDERS[taskId];
+    if (fn) setTimeout(() => fn(), delay);
+  }
+}
+
+/* ============================================================
+   TAREA 2: ESCRIBE LAS VOCALES
+   ============================================================ */
+
+const TASK2_KEYS = ['oveja', 'pato', 'casa'];
+
+function task2Render() {
+  const grid = document.getElementById('task2Grid');
+  grid.innerHTML = '';
+  if (!state.taskState[2] || state.taskState[2].currentIdx == null) {
+    state.taskState[2] = { currentIdx: 0 };
+  }
+  const ts = state.taskState[2];
+  const k = TASK2_KEYS[ts.currentIdx];
+  const w = WORDS[k];
+  const vowels = vowelsInWord(w.name);
+
+  grid.insertAdjacentHTML('beforeend', progressDots(ts.currentIdx, TASK2_KEYS.length));
+
+  const stage = document.createElement('div');
+  stage.className = 'single-stage';
+  stage.innerHTML = `
+    <div class="word-card single">
+      <div class="image-box" data-key="${k}">${getVisual(w)}</div>
+      <button class="btn-syllable" data-key="${k}">🐢 Silabear</button>
+      <div class="input-row vowel-slots">
+        ${vowels.map((v, i) => `
+          <div class="vowel-slot" data-correct="${v}" data-pos="${i}"></div>
+        `).join('')}
+      </div>
+      <div class="vowels-row vowel-keypad">
+        ${['a','e','i','o','u'].map(v =>
+          `<button class="vowel" data-vowel="${v}">${v}</button>`
+        ).join('')}
+      </div>
+    </div>
+  `;
+  grid.appendChild(stage);
+
+  // Pronuncia automáticamente la palabra al cargar
+  setTimeout(() => speech.word(w.spoken), 350);
+
+  stage.querySelector('.image-box').addEventListener('click', () => {
+    const box = stage.querySelector('.image-box');
+    box.classList.add('speaking');
+    speech.word(w.spoken, () => box.classList.remove('speaking'));
+  });
+  stage.querySelector('.btn-syllable').addEventListener('click', e => {
+    e.stopPropagation();
+    speech.syllables(w.syllables);
+  });
+  stage.querySelectorAll('.vowel-keypad .vowel').forEach(btn => {
+    btn.addEventListener('click', task2HandleVowelKey);
+  });
+}
+
+function task2HandleVowelKey(e) {
+  const btn = e.currentTarget;
+  const vowel = btn.dataset.vowel;
+  const grid = document.getElementById('task2Grid');
+  const slots = [...grid.querySelectorAll('.vowel-slot')];
+  const nextSlot = slots.find(s => !s.dataset.filled);
+  if (!nextSlot) return;
+
+  const k2 = TASK2_KEYS[state.taskState[2].currentIdx];
+  const item2 = WORDS[k2] ? WORDS[k2].name : null;
+  if (vowel === nextSlot.dataset.correct) {
+    nextSlot.textContent = vowel;
+    nextSlot.classList.add('correct');
+    nextSlot.dataset.filled = '1';
+    speech.letter(vowel);
+    addScore(5);
+    spawnConfetti(nextSlot, 8);
+    trackOk(2, item2);
+
+    const allFilled = slots.every(s => s.dataset.filled);
+    if (allFilled) {
+      setTimeout(() => speech.word(WORDS[k2].spoken), 350);
+      advanceTask(2, TASK2_KEYS.length);
+    }
+  } else {
+    btn.classList.add('wrong');
+    nextSlot.classList.add('shake-hint');
+    sound.wrong();
+    addScore(-1);
+    speech.letter(vowel);
+    trackFail(2, item2);
+    setTimeout(() => {
+      btn.classList.remove('wrong');
+      nextSlot.classList.remove('shake-hint');
+    }, 500);
+  }
+}
+
+/* ============================================================
+   TAREA 3: HUECOS PARA VOCALES (P_T_)
+   ============================================================ */
+
+const TASK3_KEYS = ['pato', 'mesa', 'casa'];
+
+function task3Render() {
+  const grid = document.getElementById('task3Grid');
+  grid.innerHTML = '';
+  if (!state.taskState[3] || state.taskState[3].currentIdx == null) {
+    state.taskState[3] = { currentIdx: 0 };
+  }
+  const ts = state.taskState[3];
+  const k = TASK3_KEYS[ts.currentIdx];
+  const w = WORDS[k];
+
+  grid.insertAdjacentHTML('beforeend', progressDots(ts.currentIdx, TASK3_KEYS.length));
+
+  const tiles = [...w.name].map((c, i) => {
+    if (VOWELS_SET.has(c)) {
+      return `<input class="letter-blank" maxlength="1" data-correct="${c.toLowerCase()}" data-pos="${i}" />`;
+    }
+    return `<div class="letter-tile">${c}</div>`;
+  }).join('');
+
+  const stage = document.createElement('div');
+  stage.className = 'single-stage';
+  stage.innerHTML = `
+    <div class="word-card single">
+      <div class="image-box" data-key="${k}">${getVisual(w)}</div>
+      <button class="btn-syllable" data-key="${k}">🐢 Silabear</button>
+      <div class="word-blanks" data-key="${k}">${tiles}</div>
+    </div>
+  `;
+  grid.appendChild(stage);
+
+  stage.querySelector('.image-box').addEventListener('click', () => {
+    const box = stage.querySelector('.image-box');
+    box.classList.add('speaking');
+    speech.word(w.spoken, () => box.classList.remove('speaking'));
+  });
+  stage.querySelector('.btn-syllable').addEventListener('click', e => {
+    e.stopPropagation();
+    speech.syllables(w.syllables);
+  });
+  stage.querySelectorAll('.letter-blank').forEach(inp => {
+    inp.addEventListener('input', task3HandleInput);
+  });
+  setTimeout(() => stage.querySelector('.letter-blank')?.focus(), 200);
+}
+
+function task3HandleInput(e) {
+  const inp = e.currentTarget;
+  const val = inp.value.toLowerCase().normalize('NFD')[0] || '';
+  const correct = inp.dataset.correct.normalize('NFD')[0];
+  if (!val) { inp.classList.remove('correct', 'wrong'); return; }
+  const row3 = inp.closest('.word-blanks');
+  const item3 = row3 && WORDS[row3.dataset.key] ? WORDS[row3.dataset.key].name : null;
+  if (val === correct) {
+    inp.classList.add('correct');
+    inp.classList.remove('wrong');
+    inp.disabled = true;
+    speech.letter(val);
+    addScore(5);
+    trackOk(3, item3);
+    const allCorrect = [...row3.querySelectorAll('.letter-blank')].every(i => i.classList.contains('correct'));
+    if (allCorrect) {
+      spawnConfetti(row3, 14);
+      const w = WORDS[row3.dataset.key];
+      setTimeout(() => speech.word(w.spoken), 200);
+      advanceTask(3, TASK3_KEYS.length);
+    } else {
+      const next = row3.querySelector('.letter-blank:not(:disabled)');
+      if (next) next.focus();
+    }
+  } else {
+    inp.classList.add('wrong');
+    sound.wrong();
+    addScore(-1);
+    trackFail(3, item3);
+    setTimeout(() => { inp.classList.remove('wrong'); inp.value = ''; inp.focus(); }, 600);
+  }
+}
+
+/* ============================================================
+   TAREA 4: ORDENA LAS LETRAS
+   ============================================================ */
+
+const TASK4_KEYS = ['pito', 'sopa', 'pala'];
+const SHUFFLE_DISTRACTORS = ['m', 'r', 'j', 'b'];
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function task4Render() {
+  const grid = document.getElementById('task4Grid');
+  grid.innerHTML = '';
+  if (!state.taskState[4] || state.taskState[4].currentIdx == null) {
+    state.taskState[4] = { currentIdx: 0 };
+  }
+  const ts = state.taskState[4];
+  const k = TASK4_KEYS[ts.currentIdx];
+  const w = WORDS[k];
+  const letters = [...w.name.toLowerCase()];
+  // Genera orden inicial mezclado garantizando que no esté ya correcto
+  let order;
+  do { order = shuffle(letters); } while (order.join('') === w.name.toLowerCase() && letters.length > 1);
+
+  grid.insertAdjacentHTML('beforeend', progressDots(ts.currentIdx, TASK4_KEYS.length));
+
+  const stage = document.createElement('div');
+  stage.className = 'single-stage';
+  stage.innerHTML = `
+    <div class="word-card single">
+      <div class="image-box" data-key="${k}">${getVisual(w)}</div>
+      <button class="btn-syllable" data-key="${k}">🐢 Silabear</button>
+      <div class="reorder-row" data-target="${w.name.toLowerCase()}">
+        ${order.map((l, i) => `<div class="reorder-letter" draggable="true" data-letter="${l}" data-pos="${i}">${l}</div>`).join('')}
+      </div>
+      <p class="hint" style="margin-top:8px">Arrastra una letra sobre otra para intercambiarlas</p>
+    </div>
+  `;
+  grid.appendChild(stage);
+
+  stage.querySelector('.image-box').addEventListener('click', () => {
+    const box = stage.querySelector('.image-box');
+    box.classList.add('speaking');
+    speech.word(w.spoken, () => box.classList.remove('speaking'));
+  });
+  stage.querySelector('.btn-syllable').addEventListener('click', e => {
+    e.stopPropagation();
+    speech.syllables(w.syllables);
+  });
+
+  const row = stage.querySelector('.reorder-row');
+  row.querySelectorAll('.reorder-letter').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      e.dataTransfer.effectAllowed = 'move';
+      el.classList.add('dragging');
+      window.__dragLetter = el;
+    });
+    el.addEventListener('dragend', () => {
+      el.classList.remove('dragging');
+      window.__dragLetter = null;
+    });
+    el.addEventListener('dragover', e => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (window.__dragLetter && window.__dragLetter !== el) el.classList.add('drop-target');
+    });
+    el.addEventListener('dragleave', () => el.classList.remove('drop-target'));
+    el.addEventListener('drop', e => {
+      e.preventDefault();
+      el.classList.remove('drop-target');
+      const src = window.__dragLetter;
+      if (!src || src === el) return;
+      task4SwapLetters(src, el);
+    });
+    // Click fallback (touch/no-drag): selecciona y luego intercambia
+    el.addEventListener('click', () => {
+      const sel = row.querySelector('.reorder-letter.selected');
+      if (!sel) {
+        el.classList.add('selected');
+      } else if (sel === el) {
+        el.classList.remove('selected');
+      } else {
+        sel.classList.remove('selected');
+        task4SwapLetters(sel, el);
+      }
+    });
+  });
+}
+
+function task4SwapLetters(a, b) {
+  // Intercambia data-letter y texto entre dos elementos
+  const aLet = a.dataset.letter;
+  const aText = a.textContent;
+  a.dataset.letter = b.dataset.letter;
+  a.textContent = b.textContent;
+  b.dataset.letter = aLet;
+  b.textContent = aText;
+  speech.letter(b.dataset.letter);
+  sound.click();
+  task4CheckRow(a.closest('.reorder-row'));
+}
+
+function task4CheckRow(row) {
+  const target = row.dataset.target;
+  const current = [...row.querySelectorAll('.reorder-letter')].map(el => el.dataset.letter).join('');
+  const ts = state.taskState[4];
+  const k = TASK4_KEYS[ts.currentIdx];
+  const item4 = WORDS[k] ? WORDS[k].name : k;
+  if (current === target) {
+    row.classList.add('correct');
+    addScore(15);
+    spawnConfetti(row, 16);
+    trackOk(4, item4);
+    setTimeout(() => speech.word(WORDS[k].spoken), 300);
+    advanceTask(4, TASK4_KEYS.length);
+  } else {
+    trackFail(4, item4);
+  }
+}
+
+/* ============================================================
+   TAREA 5: NÚMERO DE SÍLABAS
+   ============================================================ */
+
+const TASK5_KEYS = ['sol', 'pala', 'oveja', 'elefante'];
+
+function task5Render() {
+  const grid = document.getElementById('task5Grid');
+  grid.innerHTML = '';
+  if (!state.taskState[5] || state.taskState[5].currentIdx == null) {
+    state.taskState[5] = { currentIdx: 0 };
+  }
+  const ts = state.taskState[5];
+  const k = TASK5_KEYS[ts.currentIdx];
+  const w = WORDS[k];
+  const correctNum = w.syllables.length;
+
+  grid.insertAdjacentHTML('beforeend', progressDots(ts.currentIdx, TASK5_KEYS.length));
+
+  const stage = document.createElement('div');
+  stage.className = 'single-stage';
+  stage.innerHTML = `
+    <div class="word-card single">
+      <div class="image-box" data-key="${k}">${getVisual(w)}</div>
+      <button class="btn-syllable" data-key="${k}">🐢 Silabear</button>
+      <div class="syllable-counter" data-correct="${correctNum}" data-key="${k}">
+        ${[1, 2, 3, 4].map(n => `<button class="syllable-num" data-num="${n}">${n}</button>`).join('')}
+      </div>
+    </div>
+  `;
+  grid.appendChild(stage);
+
+  // Pronuncia automáticamente la palabra al cargar (sin texto = sin trampa)
+  setTimeout(() => speech.word(w.spoken), 350);
+
+  stage.querySelector('.image-box').addEventListener('click', () => {
+    const box = stage.querySelector('.image-box');
+    box.classList.add('speaking');
+    speech.word(w.spoken, () => box.classList.remove('speaking'));
+  });
+  stage.querySelector('.btn-syllable').addEventListener('click', e => {
+    e.stopPropagation();
+    speech.syllables(w.syllables);
+  });
+  stage.querySelectorAll('.syllable-num').forEach(btn => {
+    btn.addEventListener('click', task5HandleClick);
+  });
+}
+
+function task5HandleClick(e) {
+  const btn = e.currentTarget;
+  if (btn.classList.contains('locked')) return;
+  const wrap = btn.closest('.syllable-counter');
+  const correct = parseInt(wrap.dataset.correct);
+  const chosen = parseInt(btn.dataset.num);
+  const item5 = WORDS[wrap.dataset.key] ? WORDS[wrap.dataset.key].name : wrap.dataset.key;
+  if (chosen === correct) {
+    btn.classList.add('correct', 'locked');
+    wrap.querySelectorAll('.syllable-num').forEach(b => b.classList.add('locked'));
+    addScore(10);
+    spawnConfetti(btn, 10);
+    speech.syllables(WORDS[wrap.dataset.key].syllables);
+    trackOk(5, item5);
+    advanceTask(5, TASK5_KEYS.length);
+  } else {
+    btn.classList.add('wrong');
+    sound.wrong();
+    addScore(-2);
+    trackFail(5, item5);
+    setTimeout(() => btn.classList.remove('wrong'), 600);
+  }
+}
+
+/* ============================================================
+   TAREA 6: SONIDO /rr/ (galería multi-select)
+   ============================================================ */
+
+const TASK6_KEYS = ['raton', 'rosa', 'regla', 'rio', 'pato', 'sol', 'mesa', 'casa'];
+
+function task6Render() {
+  const wrap = document.getElementById('task6Grid');
+  wrap.innerHTML = '';
+  state.taskState[6] = { selected: new Set(), checked: false };
+
+  const shuffled = shuffle(TASK6_KEYS);
+  shuffled.forEach(k => {
+    const w = WORDS[k];
+    const item = document.createElement('div');
+    item.className = 'gallery-item';
+    item.dataset.key = k;
+    item.innerHTML = `
+      <div class="visual">${getVisual(w)}</div>
+    `;
+    item.addEventListener('click', () => task6Toggle(item));
+    wrap.appendChild(item);
+  });
+}
+
+function task6Toggle(item) {
+  const ts = state.taskState[6];
+  if (ts.checked) return;
+  const k = item.dataset.key;
+  if (ts.selected.has(k)) {
+    ts.selected.delete(k);
+    item.classList.remove('selected');
+  } else {
+    ts.selected.add(k);
+    item.classList.add('selected');
+    speech.word(WORDS[k].spoken);
+  }
+}
+
+function task6Check() {
+  const ts = state.taskState[6];
+  if (ts.checked) return;
+  ts.checked = true;
+  const correctSet = new Set(TASK6_KEYS.filter(k => WORDS[k].startsRR));
+  let allRight = true;
+  document.querySelectorAll('#task6Grid .gallery-item').forEach(item => {
+    const k = item.dataset.key;
+    const isCorrect = correctSet.has(k);
+    const wasSelected = ts.selected.has(k);
+    const itemName = WORDS[k] ? WORDS[k].name : k;
+    item.classList.remove('selected');
+    if (isCorrect && wasSelected) {
+      item.classList.add('revealed-correct');
+      addScore(5);
+      trackOk(6, itemName);
+    } else if (!isCorrect && wasSelected) {
+      item.classList.add('revealed-wrong');
+      addScore(-2);
+      trackFail(6, itemName);
+      allRight = false;
+    } else if (isCorrect && !wasSelected) {
+      item.classList.add('revealed-correct');
+      item.style.opacity = '0.6';
+      trackFail(6, itemName);
+      allRight = false;
+    }
+  });
+  if (allRight && ts.selected.size === correctSet.size) {
+    markTaskComplete(6);
+    rainConfetti(30);
+    setTimeout(() => { speech.praise(true); showCelebration('¡Perfecto! 🎉'); }, 500);
+  } else {
+    sound.wrong();
+    setTimeout(() => speech.speak('Casi, vuelve a intentar', { rate: 0.95 }), 200);
+  }
+}
+
+function task6Reset() { task6Render(); }
+
+/* ============================================================
+   TAREA 7: UNIR SÍLABAS
+   ============================================================ */
+
+const TASK7_PAIRS = [
+  { key: 'torre', s1: 'to', s2: 'rre' },
+  { key: 'pato',  s1: 'pa', s2: 'to' },
+  { key: 'mesa',  s1: 'me', s2: 'sa' },
+  { key: 'casa',  s1: 'ca', s2: 'sa' }
+];
+
+function task7Render() {
+  const wrap = document.getElementById('task7Board');
+  wrap.innerHTML = '';
+  if (!state.taskState[7] || state.taskState[7].currentIdx == null) {
+    state.taskState[7] = { currentIdx: 0 };
+  }
+  const ts = state.taskState[7];
+  const pair = TASK7_PAIRS[ts.currentIdx];
+
+  // Banco para esta palabra: la sílaba correcta + 1 distractor por columna
+  const otherPairs = TASK7_PAIRS.filter((_, i) => i !== ts.currentIdx);
+  const distractor1 = otherPairs[Math.floor(Math.random() * otherPairs.length)].s1;
+  const distractor2 = otherPairs[Math.floor(Math.random() * otherPairs.length)].s2;
+  const s1Bank = shuffle([pair.s1, distractor1]);
+  const s2Bank = shuffle([pair.s2, distractor2]);
+
+  wrap.insertAdjacentHTML('beforeend', progressDots(ts.currentIdx, TASK7_PAIRS.length));
+
+  wrap.insertAdjacentHTML('beforeend', `
+    <div class="single-pair">
+      <div class="pair-image-large" data-key="${pair.key}">${getVisual(WORDS[pair.key])}</div>
+      <div class="pair-slots">
+        <div class="syll-slot" data-slot="1"></div>
+        <div class="syll-slot" data-slot="2"></div>
+      </div>
+
+      <div class="pair-banks">
+        <div>
+          <div class="col-header">1</div>
+          <div class="syll-bank" data-bank="1">
+            ${s1Bank.map(s => `<div class="syll-tile" draggable="true" data-syll="${s}" data-bank="1">${s}</div>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="col-header">2</div>
+          <div class="syll-bank" data-bank="2">
+            ${s2Bank.map(s => `<div class="syll-tile" draggable="true" data-syll="${s}" data-bank="2">${s}</div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+  `);
+
+  // Almacena pareja correcta para validación
+  wrap.querySelector('.single-pair').dataset.s1 = pair.s1;
+  wrap.querySelector('.single-pair').dataset.s2 = pair.s2;
+  wrap.querySelector('.single-pair').dataset.key = pair.key;
+
+  // Click en imagen
+  wrap.querySelector('.pair-image-large').addEventListener('click', () => {
+    speech.word(WORDS[pair.key].spoken);
+  });
+
+  // Drag tiles
+  wrap.querySelectorAll('.syll-tile').forEach(tile => {
+    tile.addEventListener('dragstart', e => {
+      if (tile.classList.contains('placed')) { e.preventDefault(); return; }
+      tile.classList.add('dragging');
+      window.__dragSyll = tile;
+    });
+    tile.addEventListener('dragend', () => {
+      tile.classList.remove('dragging');
+      window.__dragSyll = null;
+    });
+    tile.addEventListener('click', () => {
+      if (tile.classList.contains('placed')) return;
+      const slot = wrap.querySelector(`.syll-slot[data-slot="${tile.dataset.bank}"]`);
+      task7PlaceTile(slot, tile);
+    });
+  });
+
+  // Drop slots
+  wrap.querySelectorAll('.syll-slot').forEach(slot => {
+    slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('over'); });
+    slot.addEventListener('dragleave', () => slot.classList.remove('over'));
+    slot.addEventListener('drop', e => {
+      e.preventDefault();
+      slot.classList.remove('over');
+      if (!window.__dragSyll) return;
+      const tile = window.__dragSyll;
+      if (tile.dataset.bank !== slot.dataset.slot) { sound.wrong(); return; }
+      task7PlaceTile(slot, tile);
+    });
+  });
+}
+
+function task7PlaceTile(slot, tile) {
+  if (slot.dataset.tileSyll) {
+    const prev = document.querySelector(`.syll-tile[data-syll="${slot.dataset.tileSyll}"][data-bank="${slot.dataset.slot}"]`);
+    if (prev) { prev.classList.remove('placed'); prev.style.opacity = ''; }
+  }
+  slot.textContent = tile.dataset.syll;
+  slot.dataset.tileSyll = tile.dataset.syll;
+  tile.classList.add('placed');
+  tile.style.opacity = '0.3';
+  speech.speak(tile.dataset.syll, { rate: 0.7, pitch: 1.2 });
+  task7CheckPair();
+}
+
+function task7CheckPair() {
+  const wrap = document.getElementById('task7Board');
+  const single = wrap.querySelector('.single-pair');
+  const s1 = wrap.querySelector('.syll-slot[data-slot="1"]').textContent.trim();
+  const s2 = wrap.querySelector('.syll-slot[data-slot="2"]').textContent.trim();
+  if (!s1 || !s2) return;
+  const item7 = WORDS[single.dataset.key] ? WORDS[single.dataset.key].name : single.dataset.key;
+  if (s1 === single.dataset.s1 && s2 === single.dataset.s2) {
+    wrap.querySelectorAll('.syll-slot').forEach(s => s.classList.add('correct'));
+    addScore(15);
+    spawnConfetti(single, 18);
+    trackOk(7, item7);
+    setTimeout(() => speech.word(WORDS[single.dataset.key].spoken), 300);
+    advanceTask(7, TASK7_PAIRS.length);
+  } else {
+    sound.wrong();
+    addScore(-2);
+    trackFail(7, item7);
+    setTimeout(() => {
+      wrap.querySelectorAll('.syll-slot').forEach(slot => {
+        if (!slot.dataset.tileSyll) return;
+        const tile = document.querySelector(`.syll-tile[data-syll="${slot.dataset.tileSyll}"][data-bank="${slot.dataset.slot}"]`);
+        if (tile) { tile.classList.remove('placed'); tile.style.opacity = ''; }
+        slot.textContent = '';
+        delete slot.dataset.tileSyll;
+      });
+    }, 700);
+  }
+}
+
+/* ============================================================
+   TAREA 8: COLOREA LAS SÍLABAS CORRECTAS
+   ============================================================ */
+
+const TASK8_TARGETS = [
+  { key: 'pala',   distractors: ['ta', 'fu', 'ro'] },
+  { key: 'torre',  distractors: ['ma', 'pi', 'lu'] },
+  { key: 'oveja',  distractors: ['mi', 'sa'] }
+];
+
+function task8Render() {
+  const wrap = document.getElementById('task8Container');
+  wrap.innerHTML = '';
+  if (!state.taskState[8] || state.taskState[8].currentIdx == null) {
+    state.taskState[8] = { currentIdx: 0 };
+  }
+  const ts = state.taskState[8];
+  const t = TASK8_TARGETS[ts.currentIdx];
+  const w = WORDS[t.key];
+  const allSylls = shuffle([...w.syllables, ...t.distractors]);
+
+  wrap.insertAdjacentHTML('beforeend', progressDots(ts.currentIdx, TASK8_TARGETS.length));
+
+  const card = document.createElement('div');
+  card.className = 'word-card single';
+  card.style.margin = '0 auto';
+  card.innerHTML = `
+    <div class="colorize-target">
+      <div class="image-box" data-key="${t.key}">${getVisual(w)}</div>
+    </div>
+    <div class="colorize-grid" data-key="${t.key}">
+      ${allSylls.map(s => `<button class="colorize-syll" data-syll="${s}">${s}</button>`).join('')}
+    </div>
+  `;
+  wrap.appendChild(card);
+
+  // Pronuncia automáticamente la palabra al cargar (sin texto = sin trampa)
+  setTimeout(() => speech.word(w.spoken), 350);
+
+  card.querySelector('.image-box').addEventListener('click', () => {
+    const box = card.querySelector('.image-box');
+    box.classList.add('speaking');
+    speech.word(w.spoken, () => box.classList.remove('speaking'));
+  });
+  card.querySelectorAll('.colorize-syll').forEach(btn => {
+    btn.addEventListener('click', task8HandleClick);
+  });
+}
+
+function task8HandleClick(e) {
+  const btn = e.currentTarget;
+  if (btn.classList.contains('locked')) return;
+  const ts = state.taskState[8];
+  const target = TASK8_TARGETS[ts.currentIdx];
+  const word = WORDS[target.key];
+  const syll = btn.dataset.syll;
+  const grid = btn.closest('.colorize-grid');
+
+  if (word.syllables.includes(syll)) {
+    btn.classList.add('correct', 'locked');
+    addScore(8);
+    spawnConfetti(btn, 8);
+    speech.speak(syll, { rate: 0.7, pitch: 1.2 });
+    trackOk(8, word.name);
+    const correctClicked = [...grid.querySelectorAll('.colorize-syll.correct')].length;
+    if (correctClicked === word.syllables.length) {
+      setTimeout(() => speech.word(word.spoken), 300);
+      advanceTask(8, TASK8_TARGETS.length);
+    }
+  } else {
+    btn.classList.add('wrong');
+    sound.wrong();
+    addScore(-2);
+    trackFail(8, word.name);
+    setTimeout(() => btn.classList.remove('wrong'), 600);
+  }
+}
+
+/* ============================================================
+   ROUTER DE RESET
+   ============================================================ */
+
+const TASK_RENDERS = {
+  1: task1Render, 2: task2Render, 3: task3Render, 4: task4Render,
+  5: task5Render, 6: task6Render, 7: task7Render, 8: task8Render
+};
+
+function resetCurrentTask() {
+  delete state.taskState[state.currentTask];
+  const fn = TASK_RENDERS[state.currentTask];
+  if (fn) fn();
+}
+
+/* ============================================================
+   INICIALIZACIÓN
+   ============================================================ */
+
+function init() {
+  speech.init();
+  renderTaskNav();
+  task1Render();
+  task2Render();
+  task3Render();
+  task4Render();
+  task5Render();
+  task6Render();
+  task7Render();
+  task8Render();
+  goToTask(1);
+
+  document.getElementById('btnPrev').addEventListener('click', () =>
+    goToTask(state.currentTask - 1)
+  );
+  document.getElementById('btnNext').addEventListener('click', () =>
+    goToTask(state.currentTask + 1)
+  );
+  document.getElementById('btnReset').addEventListener('click', resetCurrentTask);
+  document.getElementById('btnSound').addEventListener('click', e => {
+    state.soundEnabled = !state.soundEnabled;
+    e.currentTarget.textContent = state.soundEnabled ? '🔊 Sonido ON' : '🔇 Sonido OFF';
+  });
+
+  // Botón comprobar tarea 6
+  const t6Check = document.getElementById('task6Check');
+  if (t6Check) t6Check.addEventListener('click', task6Check);
+
+  // Toggle hamburguesa para mostrar/ocultar las 8 tareas
+  const navToggle = document.getElementById('navToggle');
+  const taskNav = document.getElementById('taskNav');
+  if (navToggle && taskNav) {
+    navToggle.addEventListener('click', () => {
+      const collapsed = taskNav.classList.toggle('collapsed');
+      navToggle.classList.toggle('collapsed', collapsed);
+      sound.click();
+    });
+  }
+
+  document.addEventListener('keydown', e => {
+    const tag = (e.target.tagName || '').toLowerCase();
+    if (tag === 'input') return; // no interferir con escritura
+    if (e.key === 'ArrowRight') goToTask(state.currentTask + 1);
+    if (e.key === 'ArrowLeft') goToTask(state.currentTask - 1);
+  });
+
+  window.addEventListener('beforeunload', () => {
+    if (M && state.currentTask && !state.completedTasks.has(state.currentTask)) {
+      M.endTask(state.currentTask, { completada: false });
+    }
+  });
+}
+
+init();
+</script>
+</body>
+</html>

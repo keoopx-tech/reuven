@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guía para familias · Reuven</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --navy: #1e3a5f;
+    --teal: #c8202d;
+    --teal-dark: #9b1a23;
+    --green-soft: #f0fdf4;
+    --green-border: #86efac;
+    --green-dark: #16a34a;
+    --yellow: #fbbf24;
+    --pink: #ec4899;
+    --blue: #3b82f6;
+    --text: #1f2937;
+    --text-soft: #6b7280;
+    --border-soft: #e5e7eb;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ==== NAV ==== */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(245, 243, 238, 0.92);
+    backdrop-filter: saturate(150%) blur(8px);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .nav-inner {
+    max-width: 1100px; margin: 0 auto;
+    padding: 14px 22px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--navy);
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.3rem;
+  }
+  .brand-logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800;
+  }
+  .nav-links { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+  .nav-link {
+    color: var(--text-soft); text-decoration: none;
+    font-weight: 600; font-size: 0.95rem; padding: 8px 14px;
+    border-radius: 10px; transition: all 0.15s;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--navy); background: var(--green-soft); }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: none; cursor: pointer;
+    font-family: inherit; font-weight: 700; text-decoration: none;
+    border-radius: 14px; padding: 11px 22px;
+    transition: all 0.2s; font-size: 1rem;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    color: white; box-shadow: 0 4px 14px rgba(200, 32, 45, 0.35);
+  }
+  .btn-primary:hover { transform: translateY(-1px); }
+  .btn-secondary { background: var(--surface); color: var(--navy); border: 1.5px solid var(--border-soft); }
+  .btn-secondary:hover { border-color: var(--navy); }
+  .btn-lg { padding: 15px 30px; font-size: 1.08rem; border-radius: 16px; }
+
+  /* ==== HERO ==== */
+  .hero {
+    max-width: 1100px; margin: 0 auto;
+    padding: 60px 22px 40px;
+    text-align: center;
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-soft); border: 1px solid var(--green-border);
+    color: var(--green-dark); padding: 6px 14px;
+    border-radius: 100px; font-weight: 700; font-size: 0.85rem;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 900; line-height: 1.1;
+    color: var(--navy); letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .hero p {
+    color: var(--text-soft);
+    font-size: clamp(1rem, 1.5vw, 1.15rem);
+    max-width: 640px; margin: 0 auto;
+  }
+
+  /* ==== LAYOUT ==== */
+  .layout {
+    max-width: 1100px; margin: 0 auto;
+    padding: 30px 22px 60px;
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 40px;
+  }
+  .toc {
+    position: sticky; top: 90px; align-self: start;
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    padding: 18px 16px;
+  }
+  .toc h4 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy); font-size: 0.85rem;
+    font-weight: 800; letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .toc a {
+    display: block;
+    color: var(--text-soft);
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .toc a:hover { background: var(--green-soft); color: var(--green-dark); }
+
+  /* ==== CONTENT ==== */
+  .content { min-width: 0; }
+  .content section {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 22px;
+    padding: 32px 32px;
+    margin-bottom: 22px;
+    scroll-margin-top: 80px;
+  }
+  .content h2 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy);
+    font-size: clamp(1.4rem, 2.8vw, 1.85rem);
+    font-weight: 800;
+    margin-bottom: 14px;
+    letter-spacing: -0.01em;
+  }
+  .content h2 .ico {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 1em;
+  }
+  .content p { color: var(--text-soft); margin-bottom: 14px; }
+  .content ul {
+    list-style: none;
+    margin-bottom: 14px;
+  }
+  .content ul li {
+    padding: 10px 0 10px 30px;
+    position: relative;
+    color: var(--text);
+  }
+  .content ul li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    width: 22px; height: 22px;
+    background: var(--green-soft);
+    color: var(--green-dark);
+    border-radius: 50%;
+    border: 1px solid var(--green-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 800;
+    top: 11px;
+  }
+
+  .data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .data-card {
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .data-card .ico {
+    display: inline-block;
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: var(--green-soft);
+    color: var(--green-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  .data-card h4 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy); font-size: 1rem;
+    font-weight: 800; margin-bottom: 6px;
+  }
+  .data-card p { font-size: 0.88rem; margin: 0; }
+
+  details {
+    border-top: 1px solid var(--border-soft);
+    padding: 14px 0;
+  }
+  details:first-of-type { border-top: none; padding-top: 4px; }
+  details summary {
+    cursor: pointer;
+    font-weight: 700;
+    color: var(--navy);
+    font-size: 1.02rem;
+    list-style: none;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 4px 0;
+  }
+  details summary::-webkit-details-marker { display: none; }
+  details summary::after {
+    content: '+';
+    font-size: 1.4rem;
+    color: var(--text-soft);
+    transition: transform 0.2s;
+    line-height: 1;
+  }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin-top: 10px; margin-bottom: 4px; }
+
+  .cta-box {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--teal-dark) 100%);
+    color: white;
+    border-radius: 22px;
+    padding: 36px 32px;
+    text-align: center;
+    margin-top: 30px;
+  }
+  .cta-box h3 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.6rem; font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .cta-box p { opacity: 0.85; margin-bottom: 22px; }
+  .cta-box .btn-primary {
+    background: white; color: var(--navy);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  }
+  .cta-box .btn-primary:hover { background: var(--yellow); }
+
+  footer {
+    border-top: 1px solid var(--border-soft);
+    padding: 28px 22px;
+    text-align: center;
+    color: var(--text-soft);
+    font-size: 0.88rem;
+  }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .toc { position: static; }
+    .content section { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="landing.html" class="brand">
+      <span class="brand-logo" style="font-size:0.92rem;letter-spacing:-0.02em;width:40px;height:34px">RF</span>
+      <span style="display:flex;flex-direction:column;line-height:1.05;gap:1px"><span>Reuven</span><span style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal)">Enseñamos a Pensar</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="landing.html" class="nav-link">Inicio</a>
+      <a href="guia-adulto.html" class="nav-link active">Para familias</a>
+      <a href="login-adultos.html" class="nav-link">🔐 Métricas</a>
+      <a href="registro-profesional.html" class="nav-link">Profesionales</a>
+      <a href="login-ninos.html" class="btn btn-primary">Empezar</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <span class="pill">👨‍👩‍👧 Para padres, madres y tutores</span>
+  <h1>Guía para familias</h1>
+  <p>Todo lo que necesitas saber para acompañar a tu hijo o hija con Reuven: cómo funciona, cómo cuidamos sus datos, y cómo sacarle el mayor partido.</p>
+</header>
+
+<div class="layout">
+  <aside class="toc">
+    <h4>En esta página</h4>
+    <a href="#que-es">Qué hace Reuven</a>
+    <a href="#acompanar">Cómo acompañar</a>
+    <a href="#datos">Qué datos recogemos</a>
+    <a href="#control-parental">Control parental</a>
+    <a href="#faq">Preguntas frecuentes</a>
+  </aside>
+
+  <div class="content">
+    <section id="que-es">
+      <h2><span class="ico">🌱</span>Qué hace Reuven</h2>
+      <p>Reuven es una plataforma de lectoescritura para niños y niñas en español. A través de 8 actividades guiadas, los menores trabajan vocales, sílabas, palabras, sonidos y escritura, con una mezcla de audio, dibujo e interacción.</p>
+      <ul>
+        <li>Pensado para 4-8 años, ajustable a otras edades.</li>
+        <li>Funciona desde el navegador, sin instalación.</li>
+        <li>Cada acierto se refuerza con voz y celebración (sonido y confeti).</li>
+        <li>Los padres tienen su propio espacio separado del de los niños.</li>
+      </ul>
+    </section>
+
+    <section id="acompanar">
+      <h2><span class="ico">🤝</span>Cómo acompañar a tu hijo/a</h2>
+      <p>El aprendizaje funciona mejor cuando tú estás cerca, sin presionar. Estas son nuestras recomendaciones:</p>
+      <ul>
+        <li><strong>Sesiones cortas y frecuentes.</strong> 10-15 minutos al día rinden más que una hora a la semana.</li>
+        <li><strong>Celebra el intento, no solo el acierto.</strong> Equivocarse forma parte del proceso.</li>
+        <li><strong>Lee en voz alta con él/ella</strong> antes o después de la sesión. Refuerza lo aprendido.</li>
+        <li><strong>Sin pantalla justo antes de dormir.</strong> Mejor por la tarde, después de jugar al aire libre.</li>
+        <li><strong>Si una actividad le frustra,</strong> dejadla. Volved a una más fácil y retomad otro día.</li>
+      </ul>
+    </section>
+
+    <section id="datos">
+      <h2><span class="ico">🔒</span>Qué datos recogemos y por qué</h2>
+      <p>La privacidad de los menores es prioritaria. Solo recogemos los datos imprescindibles para que la app funcione y para que puedas hacer seguimiento.</p>
+      <div class="data-grid">
+        <div class="data-card">
+          <div class="ico">👤</div>
+          <h4>Nombre del menor</h4>
+          <p>Para personalizar el perfil. Puede ser un apodo si lo prefieres.</p>
+        </div>
+        <div class="data-card">
+          <div class="ico">📅</div>
+          <h4>Fecha de nacimiento</h4>
+          <p>Para adaptar la dificultad de las actividades.</p>
+        </div>
+        <div class="data-card">
+          <div class="ico">📊</div>
+          <h4>Progreso</h4>
+          <p>Aciertos, errores y tiempo por actividad. Solo tú lo ves.</p>
+        </div>
+        <div class="data-card">
+          <div class="ico">📧</div>
+          <h4>Tu email</h4>
+          <p>Para que puedas recuperar el acceso a tu cuenta.</p>
+        </div>
+      </div>
+      <p style="margin-top: 18px;">No usamos los datos del menor para publicidad. No los vendemos. No los compartimos sin tu consentimiento explícito (por ejemplo, con un profesional autorizado por ti).</p>
+    </section>
+
+    <section id="control-parental">
+      <h2><span class="ico">🛡️</span>Control parental</h2>
+      <p>Tienes el control total sobre el perfil de tu hijo/a:</p>
+      <ul>
+        <li><strong>Pausar o eliminar el perfil</strong> en cualquier momento.</li>
+        <li><strong>Limitar el tiempo de uso</strong> con un temporizador opcional.</li>
+        <li><strong>Autorizar (o revocar) el acceso</strong> a un profesional (docente, psicólogo/a, logopeda).</li>
+        <li><strong>Descargar y borrar todos los datos</strong> del menor con un clic, según el RGPD.</li>
+      </ul>
+    </section>
+
+    <section id="faq">
+      <h2><span class="ico">❓</span>Preguntas frecuentes</h2>
+      <details>
+        <summary>¿Es de pago?</summary>
+        <p>La versión actual es gratuita. Si en el futuro lanzamos un plan premium, los perfiles ya creados seguirán teniendo acceso al núcleo gratuito.</p>
+      </details>
+      <details>
+        <summary>¿Mi hijo necesita saber leer para usarla?</summary>
+        <p>No. La app está pensada precisamente para acompañar el aprendizaje de la lectura. Todo lleva instrucciones por voz.</p>
+      </details>
+      <details>
+        <summary>¿Funciona sin internet?</summary>
+        <p>Necesita conexión la primera vez. Las sesiones posteriores pueden funcionar parcialmente offline si la pestaña ya estaba cargada.</p>
+      </details>
+      <details>
+        <summary>¿Qué pasa si quiero borrar la cuenta?</summary>
+        <p>Desde tu perfil de adulto puedes solicitar la eliminación completa. Se borran tu cuenta y la del menor, con todos sus datos asociados.</p>
+      </details>
+      <details>
+        <summary>¿Cómo doy acceso a la logopeda de mi hijo?</summary>
+        <p>Desde tu cuenta puedes generar un código de vinculación. Se lo das al profesional y este lo introduce en su registro. Tú decides cuándo revocarlo.</p>
+      </details>
+    </section>
+
+    <div class="cta-box">
+      <h3>¿Listos para crear la cuenta de la familia?</h3>
+      <p>Tarda menos de un minuto. Solo necesitas tu email y el nombre del niño o niña.</p>
+      <a href="registro-adulto.html" class="btn btn-primary btn-lg">Crear cuenta de familia →</a>
+      <div style="margin-top:14px;">
+        <a href="login-adultos.html" style="color:#fff;opacity:0.9;text-decoration:underline;font-weight:600;">📊 Ver métricas (acceso adulto)</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div>© 2026 Reuven · <a href="landing.html" style="color: inherit;">Inicio</a> · <a href="registro-profesional.html" style="color: inherit;">Para profesionales</a> · <a href="#" style="color: inherit;">Política de privacidad</a></div>
+</footer>
+
+</body>
+</html>

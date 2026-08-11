@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acceso adulto · Reuven</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<script src="assets/js/seed.js"></script>
+<script src="assets/js/metrics.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --navy: #1e3a5f;
+    --teal: #0d9488;
+    --teal-dark: #0f766e;
+    --green-soft: #f0fdf4;
+    --green-border: #86efac;
+    --green-dark: #16a34a;
+    --yellow: #fbbf24;
+    --pink: #ec4899;
+    --blue: #3b82f6;
+    --red: #ef4444;
+    --text: #1f2937;
+    --text-soft: #6b7280;
+    --border-soft: #e5e7eb;
+  }
+  body {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    display: flex; flex-direction: column;
+  }
+  header {
+    padding: 18px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--surface);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--navy);
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.3rem;
+  }
+  .brand-logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800;
+  }
+  .help-link {
+    color: var(--text-soft); text-decoration: none;
+    font-weight: 600; font-size: 0.95rem;
+    padding: 8px 16px; border-radius: 10px;
+    transition: all 0.15s;
+  }
+  .help-link:hover { color: var(--navy); background: var(--green-soft); }
+
+  main {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 22px;
+  }
+  .card {
+    width: 100%; max-width: 460px;
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 24px;
+    padding: 40px 36px;
+    box-shadow: 0 20px 50px -16px rgba(30, 58, 95, 0.18);
+  }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--green-soft); border: 1px solid var(--green-border);
+    color: var(--green-dark);
+    padding: 6px 14px;
+    border-radius: 100px;
+    font-weight: 700; font-size: 0.82rem;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.9rem; font-weight: 900;
+    color: var(--navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .lead { color: var(--text-soft); font-size: 0.98rem; margin-bottom: 28px; }
+
+  .role-tabs {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 22px;
+    background: var(--bg);
+    padding: 6px;
+    border-radius: 14px;
+  }
+  .role-tab {
+    border: none; cursor: pointer; font-family: inherit;
+    background: transparent;
+    padding: 12px 16px;
+    font-weight: 700;
+    color: var(--text-soft);
+    border-radius: 10px;
+    transition: all 0.15s;
+    font-size: 0.95rem;
+  }
+  .role-tab.active {
+    background: var(--surface);
+    color: var(--navy);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  }
+
+  label {
+    display: block;
+    font-weight: 600; color: var(--navy);
+    margin-bottom: 6px; font-size: 0.9rem;
+  }
+  input[type="email"], input[type="password"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border-soft);
+    border-radius: 12px;
+    font-family: inherit; font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 16px;
+    transition: border-color 0.15s;
+  }
+  input:focus { outline: none; border-color: var(--teal); }
+
+  .btn {
+    width: 100%;
+    border: none; cursor: pointer;
+    font-family: inherit; font-weight: 700;
+    border-radius: 12px;
+    padding: 13px 22px;
+    transition: all 0.2s;
+    font-size: 1rem;
+    margin-top: 4px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    color: white;
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+  }
+  .btn-primary:hover { transform: translateY(-1px); }
+
+  .error {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    margin-bottom: 14px;
+    display: none;
+  }
+  .error.show { display: block; }
+
+  .demo-creds {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px dashed var(--border-soft);
+    font-size: 0.82rem;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+  .demo-creds h4 { color: var(--navy); font-size: 0.85rem; margin-bottom: 6px; font-weight: 800; }
+  .demo-creds code {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    background: var(--bg); padding: 1px 6px; border-radius: 5px;
+    color: var(--navy);
+  }
+  .demo-creds .quick {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px;
+  }
+  .demo-creds .quick button {
+    background: var(--bg);
+    border: 1px solid var(--border-soft);
+    color: var(--navy);
+    padding: 5px 10px;
+    border-radius: 8px;
+    font-family: inherit; font-size: 0.78rem; font-weight: 600;
+    cursor: pointer;
+  }
+  .demo-creds .quick button:hover { border-color: var(--teal); color: var(--teal-dark); }
+
+  footer {
+    padding: 20px 22px 30px;
+    text-align: center;
+    color: var(--text-soft);
+    font-size: 0.85rem;
+  }
+  footer a { color: var(--text-soft); text-decoration: none; margin: 0 10px; }
+  footer a:hover { color: var(--teal-dark); }
+</style>
+</head>
+<body>
+
+<header>
+  <a href="landing.html" class="brand">
+    <span class="brand-logo">R</span>
+    <span>Reuven</span>
+  </a>
+  <a href="login-ninos.html" class="help-link">Soy un niño/a</a>
+</header>
+
+<main>
+  <div class="card">
+    <span class="pill">🔐 Acceso adulto · Demo</span>
+    <h1>Accede a las métricas</h1>
+    <p class="lead">Inicia sesión como <b>tutor</b> (papá/mamá) o como <b>profesional</b> para ver el progreso de los niños/as a tu cargo.</p>
+
+    <div class="role-tabs" id="roleTabs">
+      <button type="button" class="role-tab active" data-rol="tutor">👨‍👩‍👧 Tutor</button>
+      <button type="button" class="role-tab" data-rol="profesional">🎓 Profesional</button>
+    </div>
+
+    <div class="error" id="errBox"></div>
+
+    <form id="loginForm">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="papa@demo.com" autocomplete="email" required>
+
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" placeholder="demo123" autocomplete="current-password" required>
+
+      <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+
+    <div class="demo-creds">
+      <h4>Credenciales de demo</h4>
+      Tutor: <code>papa@demo.com</code> / <code>demo123</code> (ve a Liam y Ellie)<br>
+      Tutor: <code>mama@demo.com</code> / <code>demo123</code> (ve a Mateo)<br>
+      Profesional: <code>profe@demo.com</code> / <code>demo123</code> (ve a los 4)
+      <div class="quick">
+        <button type="button" data-q="papa@demo.com">Usar papa</button>
+        <button type="button" data-q="mama@demo.com">Usar mama</button>
+        <button type="button" data-q="profe@demo.com">Usar profe</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <a href="landing.html">Inicio</a> ·
+  <a href="login-ninos.html">Para niños</a> ·
+  <a href="guia-adulto.html">Guía para familias</a>
+</footer>
+
+<script>
+  const M = window.ReuvenMetrics;
+  M.sembrarSiVacio();
+
+  // Si ya hay sesión, ir directo a métricas
+  if (M.getSesion()) {
+    window.location.href = 'metricas.html';
+  }
+
+  const tabs = document.querySelectorAll('.role-tab');
+  let rolPreferido = 'tutor';
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      tabs.forEach(x => x.classList.toggle('active', x === t));
+      rolPreferido = t.dataset.rol;
+    });
+  });
+
+  const err = document.getElementById('errBox');
+  const emailInp = document.getElementById('email');
+  const passInp = document.getElementById('password');
+
+  document.querySelectorAll('.demo-creds .quick button').forEach(b => {
+    b.addEventListener('click', () => {
+      emailInp.value = b.dataset.q;
+      passInp.value = 'demo123';
+      passInp.focus();
+    });
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    err.classList.remove('show');
+    const sesion = M.loginAdulto(emailInp.value, passInp.value);
+    if (!sesion) {
+      err.textContent = 'Email o contraseña incorrectos.';
+      err.classList.add('show');
+      return;
+    }
+    if (rolPreferido && sesion.rol !== rolPreferido) {
+      // No bloqueamos, solo nota: el usuario tiene rol distinto al elegido pero igual entra
+    }
+    window.location.href = 'metricas.html';
+  });
+</script>
+
+</body>
+</html>

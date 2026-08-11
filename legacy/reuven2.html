@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Colorea las Vocales</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+    background: linear-gradient(135deg, #fef9c3 0%, #fde68a 50%, #fbbf24 100%);
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  h1 {
+    text-align: center;
+    color: #1f2937;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    margin-bottom: 10px;
+    text-shadow: 3px 3px 0 #fff, 6px 6px 0 rgba(0,0,0,0.1);
+  }
+  .instruction {
+    text-align: center;
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: #374151;
+    margin-bottom: 25px;
+    background: white;
+    padding: 12px 20px;
+    border-radius: 30px;
+    display: inline-block;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border: 3px dashed #84cc16;
+  }
+  .score-board {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .score-item {
+    background: white;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    border: 3px solid #84cc16;
+  }
+  .score-item .stars { color: #fbbf24; }
+  .words-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+  }
+  .word-card {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+  }
+  .word-card:hover {
+    transform: translateY(-5px);
+  }
+  .image-box {
+    border: 5px solid #84cc16;
+    border-radius: 20px;
+    padding: 15px;
+    background: #f7fee7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 180px;
+    margin-bottom: 15px;
+    position: relative;
+  }
+  .image-box svg {
+    max-height: 150px;
+    max-width: 150px;
+  }
+  .word-label {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #65a30d;
+    font-weight: bold;
+    margin-bottom: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .vowels-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .vowel {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: 3px solid #84cc16;
+    background: white;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #65a30d;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    font-family: inherit;
+  }
+  .vowel:hover:not(.locked) {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(132, 204, 22, 0.4);
+  }
+  .vowel:active:not(.locked) {
+    transform: scale(0.95);
+  }
+  .vowel.correct {
+    background: #fbbf24;
+    border-color: #f59e0b;
+    color: white;
+    animation: bounce 0.5s ease;
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+  }
+  .vowel.wrong {
+    background: #ef4444;
+    border-color: #dc2626;
+    color: white;
+    animation: shake 0.5s ease;
+  }
+  .vowel.locked {
+    cursor: not-allowed;
+    opacity: 0.85;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3) rotate(10deg); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+  .controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 12px 28px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: bold;
+    font-family: inherit;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  }
+  .btn-reset {
+    background: #3b82f6;
+    color: white;
+  }
+  .btn-reset:hover { background: #2563eb; transform: translateY(-2px); }
+  .btn-sound {
+    background: #10b981;
+    color: white;
+  }
+  .btn-sound:hover { background: #059669; transform: translateY(-2px); }
+  .celebration {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+  }
+  .celebration.active { display: flex; }
+  .celebration-msg {
+    background: white;
+    padding: 30px 50px;
+    border-radius: 30px;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #f59e0b;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: popIn 0.5s ease;
+    text-align: center;
+    border: 5px solid #fbbf24;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0) rotate(-180deg); }
+    70% { transform: scale(1.2) rotate(10deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+  .confetti {
+    position: absolute;
+    width: 10px; height: 10px;
+    animation: fall 3s linear;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+  .hint {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.95rem;
+    color: #6b7280;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎨 Colorea las Vocales 🎨</h1>
+  <div style="text-align: center;">
+    <p class="instruction">Toca las vocales que suenan en la palabra</p>
+  </div>
+
+  <div class="score-board">
+    <div class="score-item">⭐ Puntos: <span id="score">0</span></div>
+    <div class="score-item">✅ Correctas: <span id="correct">0</span>/9</div>
+  </div>
+
+  <div class="words-grid" id="wordsGrid"></div>
+
+  <div class="controls">
+    <button class="btn btn-sound" id="toggleSound">🔊 Sonido ON</button>
+    <button class="btn btn-reset" onclick="resetGame()">🔄 Reiniciar</button>
+  </div>
+
+  <p class="hint">💡 Pista: Escucha cómo suena cada palabra y toca todas sus vocales</p>
+</div>
+
+<div class="celebration" id="celebration">
+  <div class="celebration-msg" id="celebrationMsg">¡Muy bien! 🎉</div>
+</div>
+
+<script>
+  const words = [
+    {
+      name: 'ANILLO',
+      vowels: ['a','e','i','o','u'],
+      correct: ['a','i','o'],
+      svg: `<svg viewBox="0 0 100 100"><defs><linearGradient id="d1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7dd3fc"/><stop offset="1" stop-color="#0284c7"/></linearGradient></defs><ellipse cx="50" cy="65" rx="25" ry="22" fill="none" stroke="#fbbf24" stroke-width="6"/><polygon points="50,20 40,40 50,45 60,40" fill="url(#d1)" stroke="#0369a1" stroke-width="1.5"/><polygon points="40,40 50,45 45,35" fill="#bae6fd"/><polygon points="50,45 60,40 55,35" fill="#0ea5e9"/></svg>`
+    },
+    {
+      name: 'OVEJA',
+      vowels: ['o','e','i','u','a'],
+      correct: ['o','e','a'],
+      svg: `<svg viewBox="0 0 100 100"><ellipse cx="50" cy="55" rx="32" ry="25" fill="#f9fafb" stroke="#1f2937" stroke-width="1.5"/><circle cx="30" cy="45" r="8" fill="#f9fafb" stroke="#1f2937" stroke-width="1"/><circle cx="70" cy="45" r="8" fill="#f9fafb" stroke="#1f2937" stroke-width="1"/><circle cx="35" cy="65" r="8" fill="#f9fafb" stroke="#1f2937" stroke-width="1"/><circle cx="65" cy="65" r="8" fill="#f9fafb" stroke="#1f2937" stroke-width="1"/><circle cx="50" cy="42" r="10" fill="#f9fafb" stroke="#1f2937" stroke-width="1"/><ellipse cx="50" cy="52" rx="14" ry="12" fill="#374151"/><circle cx="45" cy="50" r="1.8" fill="white"/><circle cx="55" cy="50" r="1.8" fill="white"/><ellipse cx="50" cy="58" rx="3" ry="2" fill="#f9a8d4"/><rect x="38" y="78" width="4" height="10" fill="#1f2937"/><rect x="58" y="78" width="4" height="10" fill="#1f2937"/></svg>`
+    },
+    {
+      name: 'AVIÓN',
+      vowels: ['a','e','i','o','u'],
+      correct: ['a','i','o'],
+      svg: `<svg viewBox="0 0 100 100"><defs><linearGradient id="p1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fcd34d"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><ellipse cx="50" cy="55" rx="35" ry="12" fill="url(#p1)" stroke="#78350f" stroke-width="1.5"/><polygon points="15,55 5,40 8,55 5,70" fill="#3b82f6" stroke="#1e3a8a" stroke-width="1.5"/><polygon points="50,55 55,30 60,55" fill="#3b82f6" stroke="#1e3a8a" stroke-width="1.5"/><circle cx="70" cy="52" r="4" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1"/><circle cx="55" cy="52" r="4" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1"/><circle cx="40" cy="52" r="4" fill="#dbeafe" stroke="#1e3a8a" stroke-width="1"/><circle cx="85" cy="55" r="3" fill="#1f2937"/><line x1="82" y1="50" x2="88" y2="50" stroke="#1f2937" stroke-width="2"/><line x1="82" y1="60" x2="88" y2="60" stroke="#1f2937" stroke-width="2"/></svg>`
+    }
+  ];
+
+  let score = 0;
+  let correctCount = 0;
+  let totalCorrect = words.reduce((sum, w) => sum + w.correct.length, 0);
+  let soundEnabled = true;
+  let audioCtx = null;
+
+  function getAudio() {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    return audioCtx;
+  }
+
+  function playTone(freq, duration = 0.2, type = 'sine') {
+    if (!soundEnabled) return;
+    try {
+      const ctx = getAudio();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  function playCorrect() {
+    playTone(523, 0.15);
+    setTimeout(() => playTone(659, 0.15), 100);
+    setTimeout(() => playTone(784, 0.2), 200);
+  }
+
+  function playWrong() {
+    playTone(200, 0.3, 'sawtooth');
+  }
+
+  function playWin() {
+    const notes = [523, 659, 784, 1047];
+    notes.forEach((n, i) => setTimeout(() => playTone(n, 0.3), i * 150));
+  }
+
+  function renderGame() {
+    const grid = document.getElementById('wordsGrid');
+    grid.innerHTML = '';
+    words.forEach((word, wIdx) => {
+      const card = document.createElement('div');
+      card.className = 'word-card';
+      card.innerHTML = `
+        <div class="image-box">${word.svg}</div>
+        <div class="word-label">${word.name}</div>
+        <div class="vowels-row">
+          ${word.vowels.map(v => `
+            <button class="vowel" data-word="${wIdx}" data-vowel="${v}">${v}</button>
+          `).join('')}
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    document.querySelectorAll('.vowel').forEach(btn => {
+      btn.addEventListener('click', handleVowelClick);
+    });
+  }
+
+  function handleVowelClick(e) {
+    const btn = e.currentTarget;
+    if (btn.classList.contains('locked')) return;
+    const wIdx = parseInt(btn.dataset.word);
+    const vowel = btn.dataset.vowel;
+    const word = words[wIdx];
+
+    if (word.correct.includes(vowel)) {
+      btn.classList.add('correct', 'locked');
+      score += 10;
+      correctCount++;
+      playCorrect();
+      spawnConfetti(btn, 8);
+      updateScore();
+
+      if (correctCount === totalCorrect) {
+        setTimeout(showWinCelebration, 600);
+      }
+    } else {
+      btn.classList.add('wrong');
+      playWrong();
+      score = Math.max(0, score - 2);
+      updateScore();
+      setTimeout(() => btn.classList.remove('wrong'), 600);
+    }
+  }
+
+  function updateScore() {
+    document.getElementById('score').textContent = score;
+    document.getElementById('correct').textContent = correctCount;
+  }
+
+  function spawnConfetti(element, count) {
+    const rect = element.getBoundingClientRect();
+    const colors = ['#fbbf24','#84cc16','#3b82f6','#ec4899','#a855f7'];
+    for (let i = 0; i < count; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = (rect.left + rect.width/2) + 'px';
+      c.style.top = (rect.top + rect.height/2) + 'px';
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      c.style.position = 'fixed';
+      c.style.setProperty('--dx', (Math.random()*200-100) + 'px');
+      c.style.animation = 'fall 2s linear';
+      c.style.zIndex = '1000';
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 2000);
+    }
+  }
+
+  function showWinCelebration() {
+    playWin();
+    const cel = document.getElementById('celebration');
+    const msg = document.getElementById('celebrationMsg');
+    msg.innerHTML = `¡Excelente! 🎉<br><span style="font-size:1.2rem;color:#374151">Completaste todas las palabras</span><br><span style="font-size:2rem">⭐ ${score} puntos ⭐</span>`;
+    cel.classList.add('active');
+    for (let i = 0; i < 40; i++) {
+      setTimeout(() => {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random()*100 + 'vw';
+        c.style.top = '-20px';
+        c.style.position = 'fixed';
+        c.style.background = ['#fbbf24','#84cc16','#3b82f6','#ec4899','#a855f7','#ef4444'][Math.floor(Math.random()*6)];
+        c.style.zIndex = '99';
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 3000);
+      }, i * 50);
+    }
+    setTimeout(() => cel.classList.remove('active'), 3500);
+  }
+
+  function resetGame() {
+    score = 0;
+    correctCount = 0;
+    updateScore();
+    renderGame();
+  }
+
+  document.getElementById('toggleSound').addEventListener('click', (e) => {
+    soundEnabled = !soundEnabled;
+    e.target.textContent = soundEnabled ? '🔊 Sonido ON' : '🔇 Sonido OFF';
+  });
+
+  renderGame();
+</script>
+</body>
+</html>

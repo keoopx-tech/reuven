@@ -1,0 +1,36 @@
+# Blueprint de Render para el backend de Reuven.
+# En Render: New + → Blueprint → conecta el repo → Render lee este archivo solo.
+#
+# Variables marcadas "sync: false" hay que pegarlas a mano en el dashboard de Render
+# (Environment → Add Environment Variable) — nunca se commitean al repo.
+
+services:
+  - type: web
+    name: reuven-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: "pip install -e ."
+    # Las migraciones corren en cada arranque, antes de levantar uvicorn.
+    # Es idempotente: si ya están aplicadas, alembic no hace nada.
+    startCommand: "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false   # postgresql+asyncpg://... de Neon/Supabase/Render Postgres
+      - key: JWT_SECRET
+        sync: false   # generar uno propio — ver DEPLOY.md
+      - key: CORS_ORIGINS
+        sync: false   # ej. ["https://reuven.vercel.app"]
+      - key: JWT_ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "15"
+      - key: REFRESH_TOKEN_EXPIRE_DAYS
+        value: "30"
+      - key: BCRYPT_ROUNDS
+        value: "12"

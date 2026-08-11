@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel profesional · Reuven</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --navy: #1e3a5f;
+    --navy-soft: #334d70;
+    --teal: #c8202d;
+    --teal-dark: #9b1a23;
+    --green: #22c55e;
+    --green-dark: #16a34a;
+    --green-soft: #f0fdf4;
+    --green-border: #86efac;
+    --yellow: #fbbf24;
+    --pink: #ec4899;
+    --blue: #3b82f6;
+    --blue-soft: #dbeafe;
+    --purple: #a855f7;
+    --orange: #f97316;
+    --red: #ef4444;
+    --text: #1f2937;
+    --text-soft: #6b7280;
+    --border-soft: #e5e7eb;
+  }
+  body {
+    font-family: 'Fredoka', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ==== TOP BAR ==== */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-soft);
+    padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; color: var(--navy);
+    font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 1.3rem;
+  }
+  .brand-logo {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--teal), var(--navy));
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 800;
+  }
+  .brand-tag {
+    margin-left: 8px;
+    background: var(--blue-soft); color: #1d4ed8;
+    font-size: 0.7rem; font-weight: 800;
+    padding: 3px 10px; border-radius: 100px;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .top-user { display: flex; align-items: center; gap: 12px; }
+  .top-user .me {
+    display: flex; flex-direction: column; text-align: right; line-height: 1.2;
+  }
+  .top-user .me strong { color: var(--navy); font-weight: 700; }
+  .top-user .me small { color: var(--text-soft); font-size: 0.78rem; }
+  .top-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #93c5fd, var(--blue));
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.92rem;
+  }
+  .logout {
+    background: transparent; border: 1.5px solid var(--border-soft);
+    color: var(--text-soft); padding: 8px 14px; border-radius: 10px;
+    font-family: inherit; font-weight: 600; font-size: 0.88rem;
+    cursor: pointer; text-decoration: none; transition: all 0.15s;
+  }
+  .logout:hover { border-color: var(--navy); color: var(--navy); }
+
+  /* ==== LAYOUT ==== */
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    min-height: calc(100vh - 70px);
+  }
+  .sidebar {
+    background: var(--surface);
+    border-right: 1px solid var(--border-soft);
+    padding: 22px 16px; overflow-y: auto;
+  }
+  .sidebar h3 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy); font-size: 0.85rem;
+    font-weight: 800; letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 14px; padding: 0 8px;
+  }
+  .sidebar h3 .count {
+    background: var(--green-soft); color: var(--green-dark);
+    border-radius: 100px; padding: 2px 10px;
+    font-size: 0.78rem; margin-left: 6px;
+  }
+  .kid-item {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid transparent;
+    text-align: left; cursor: pointer;
+    font-family: inherit; color: inherit;
+    padding: 12px; border-radius: 14px; margin-bottom: 6px;
+    display: flex; align-items: center; gap: 12px;
+    transition: all 0.15s;
+  }
+  .kid-item:hover { background: var(--bg); }
+  .kid-item.active {
+    background: var(--green-soft);
+    border-color: var(--green-border);
+  }
+  .kid-avatar {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; flex-shrink: 0;
+  }
+  .kid-avatar.a1 { background: linear-gradient(135deg, #fef3c7, var(--yellow)); }
+  .kid-avatar.a2 { background: linear-gradient(135deg, #fce7f3, var(--pink)); }
+  .kid-avatar.a3 { background: linear-gradient(135deg, #dbeafe, var(--blue)); }
+  .kid-avatar.a4 { background: linear-gradient(135deg, #ede9fe, var(--purple)); }
+  .kid-info { flex: 1; min-width: 0; }
+  .kid-info .nm {
+    font-weight: 700; color: var(--navy);
+    font-size: 0.96rem; margin-bottom: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .kid-info .meta { color: var(--text-soft); font-size: 0.78rem; }
+  .kid-progress { text-align: right; flex-shrink: 0; }
+  .kid-progress .pct {
+    font-family: 'Nunito', sans-serif;
+    color: var(--green-dark); font-weight: 800; font-size: 0.95rem;
+  }
+  .kid-progress .lbl {
+    color: var(--text-soft); font-size: 0.7rem;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .sidebar-actions {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-soft);
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .side-btn {
+    width: 100%;
+    background: var(--bg);
+    border: 1.5px dashed var(--border-soft);
+    color: var(--text-soft);
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit; font-weight: 600; font-size: 0.88rem;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .side-btn:hover { border-color: var(--teal); color: var(--teal-dark); background: var(--green-soft); }
+  .side-btn.demo { border-style: solid; background: var(--green-soft); border-color: var(--green-border); color: var(--green-dark); }
+  .side-btn.demo:hover { background: var(--green); color: white; border-color: var(--green-dark); }
+
+  /* ==== MAIN ==== */
+  main { padding: 28px 32px 60px; min-width: 0; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  #detail { animation: fadeIn 0.3s ease; }
+
+  .detail-head {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 18px; margin-bottom: 26px; flex-wrap: wrap;
+  }
+  .detail-head .who { display: flex; align-items: center; gap: 16px; }
+  .detail-head .big-avatar {
+    width: 64px; height: 64px;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+  }
+  .detail-head h1 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 900; letter-spacing: -0.01em;
+    margin-bottom: 2px;
+  }
+  .detail-head .subtle {
+    color: var(--text-soft); font-size: 0.92rem;
+  }
+  .detail-head .actions { display: flex; gap: 8px; }
+  .btn {
+    border: none; cursor: pointer;
+    font-family: inherit; font-weight: 700;
+    border-radius: 12px; padding: 10px 18px;
+    transition: all 0.2s; font-size: 0.92rem;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-light { background: var(--surface); color: var(--navy); border: 1.5px solid var(--border-soft); }
+  .btn-light:hover { border-color: var(--navy); }
+  .btn-primary { background: linear-gradient(135deg, var(--teal), var(--navy)); color: white; }
+  .btn-danger { background: transparent; color: var(--red); border: 1.5px solid var(--border-soft); }
+  .btn-danger:hover { background: #fef2f2; border-color: var(--red); }
+
+  /* ==== KPI ==== */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px; margin-bottom: 28px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px; padding: 18px 20px;
+  }
+  .kpi .lbl {
+    color: var(--text-soft); font-size: 0.82rem;
+    font-weight: 600; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .kpi .lbl .ico {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.95rem;
+  }
+  .kpi .val {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy); font-size: 1.85rem;
+    font-weight: 900; letter-spacing: -0.02em; line-height: 1;
+  }
+
+  /* ==== CARDS ==== */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border-soft);
+    border-radius: 22px;
+    padding: 24px 24px;
+    margin-bottom: 22px;
+  }
+  .card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 18px; gap: 12px; flex-wrap: wrap;
+  }
+  .card-head h2 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy); font-size: 1.15rem; font-weight: 800;
+  }
+  .card-head .sub { color: var(--text-soft); font-size: 0.85rem; }
+
+  /* ==== ACTIVITIES TABLE ==== */
+  .act-list { display: flex; flex-direction: column; gap: 10px; }
+  .act-row {
+    display: grid;
+    grid-template-columns: 38px 1fr 80px 100px;
+    gap: 14px; align-items: center;
+    padding: 12px 4px;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .act-row:last-child { border-bottom: none; }
+  .act-icon {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .act-name { font-weight: 600; color: var(--navy); }
+  .act-meta { font-size: 0.78rem; color: var(--text-soft); margin-top: 2px; }
+  .act-bar {
+    height: 10px; background: var(--bg);
+    border-radius: 100px; overflow: hidden; position: relative;
+  }
+  .act-bar-fill {
+    height: 100%; border-radius: 100px;
+    background: linear-gradient(90deg, var(--teal) 0%, var(--green) 100%);
+    transition: width 0.5s;
+  }
+  .act-pct {
+    text-align: right;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800; color: var(--navy);
+    font-size: 0.95rem;
+  }
+  .act-pct.low { color: var(--orange); }
+  .act-pct.mid { color: var(--yellow); }
+  .act-pct.empty { color: var(--text-soft); font-weight: 600; }
+
+  /* ==== CHART ==== */
+  .chart {
+    display: flex; align-items: flex-end;
+    gap: 14px; height: 220px;
+    padding: 10px 0 0;
+    border-bottom: 1px solid var(--border-soft);
+    margin-bottom: 12px;
+  }
+  .bar {
+    flex: 1;
+    background: linear-gradient(180deg, var(--teal) 0%, var(--navy) 100%);
+    border-radius: 10px 10px 0 0;
+    min-height: 4px;
+    position: relative; transition: all 0.2s;
+    cursor: default;
+  }
+  .bar:hover { transform: translateY(-3px); }
+  .bar .bar-val {
+    position: absolute; top: -22px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800; color: var(--navy); font-size: 0.82rem;
+  }
+  .bar.today { background: linear-gradient(180deg, var(--green) 0%, var(--green-dark) 100%); }
+  .chart-labels {
+    display: flex; gap: 14px;
+    font-size: 0.78rem; color: var(--text-soft); font-weight: 600;
+  }
+  .chart-labels span { flex: 1; text-align: center; }
+  .chart-labels span.today { color: var(--green-dark); font-weight: 800; }
+
+  /* ==== EMPTY ==== */
+  .empty {
+    text-align: center;
+    padding: 60px 22px;
+    color: var(--text-soft);
+    background: var(--surface);
+    border: 2px dashed var(--border-soft);
+    border-radius: 22px;
+  }
+  .empty .ico { font-size: 3.5rem; margin-bottom: 14px; }
+  .empty h2 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy); font-size: 1.5rem;
+    margin-bottom: 8px; font-weight: 800;
+  }
+  .empty p { max-width: 440px; margin: 0 auto 22px; }
+  .empty-cta { display: inline-flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .empty-cta .btn-primary { padding: 12px 24px; font-size: 1rem; }
+
+  /* ==== MODAL ==== */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(30, 58, 95, 0.5);
+    backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; z-index: 100;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: 24px;
+    padding: 32px 28px;
+    max-width: 460px; width: 100%;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+    animation: pop 0.25s ease;
+  }
+  @keyframes pop {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal h2 {
+    font-family: 'Nunito', sans-serif;
+    color: var(--navy); font-size: 1.4rem;
+    font-weight: 800; margin-bottom: 6px;
+  }
+  .modal p { color: var(--text-soft); margin-bottom: 18px; font-size: 0.95rem; }
+  .modal label {
+    display: block; font-weight: 600;
+    color: var(--navy); margin-bottom: 6px; font-size: 0.9rem;
+  }
+  .modal input[type="text"] {
+    width: 100%; padding: 12px 14px;
+    border: 1.5px solid var(--border-soft);
+    border-radius: 12px;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 12px;
+    transition: border-color 0.15s;
+  }
+  .modal input[type="text"]:focus { outline: none; border-color: var(--teal); }
+  .modal-msg {
+    margin-bottom: 14px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.88rem;
+    display: none;
+  }
+  .modal-msg.error { display: block; background: #fef2f2; color: var(--red); border: 1px solid #fecaca; }
+  .modal-msg.success { display: block; background: var(--green-soft); color: var(--green-dark); border: 1px solid var(--green-border); }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+  .btn-ghost { background: transparent; color: var(--text-soft); border: none; cursor: pointer; font-family: inherit; font-weight: 700; padding: 11px 18px; border-radius: 12px; }
+  .btn-ghost:hover { background: var(--bg); color: var(--navy); }
+
+  @media (max-width: 880px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--border-soft); max-height: 320px; }
+    main { padding: 22px 18px 50px; }
+    .act-row { grid-template-columns: 32px 1fr 60px; }
+    .act-row .act-bar { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="landing.html" class="brand">
+    <span class="brand-logo" style="font-size:0.92rem;letter-spacing:-0.02em;width:40px;height:34px">RF</span>
+    <span style="display:flex;flex-direction:column;line-height:1.05;gap:1px"><span>Reuven<span class="brand-tag">Pro</span></span><span style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal)">Enseñamos a Pensar</span></span>
+  </a>
+  <div class="top-user" id="topUser"></div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <h3>Menores vinculados <span class="count" id="kidsCount">0</span></h3>
+    <div id="kidsList"></div>
+    <div class="sidebar-actions">
+      <button class="side-btn" id="btnLink">+ Vincular menor con código</button>
+      <button class="side-btn demo" id="btnDemo">⚡ Cargar datos demo</button>
+      <button class="side-btn" id="btnReset" style="color: var(--red); border-color: #fecaca;">Borrar todos los datos</button>
+    </div>
+  </aside>
+
+  <main id="main"></main>
+</div>
+
+<!-- MODAL: vincular por código -->
+<div class="modal-bg" id="modalLink" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h2>Vincular menor con código</h2>
+    <p>Pídele al tutor/a del menor el código generado en su cuenta de familia.</p>
+    <label for="linkCode">Código de vinculación</label>
+    <input type="text" id="linkCode" placeholder="XXXX-XXXX" maxlength="9" autocomplete="off">
+    <div class="modal-msg" id="linkMsg"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn-ghost" id="linkCancel">Cancelar</button>
+      <button type="button" class="btn btn-primary" id="linkSave">Vincular</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/metrics.js"></script>
+<script src="assets/js/auth.js"></script>
+<script>
+  const M = window.ReuvenMetrics;
+  const Auth = window.ReuvenAuth;
+
+  const TASK_ICONS = ['🎨','✏️','🔤','🔀','🔢','👂','🧩','🌈'];
+  const AVATAR_BG = ['linear-gradient(135deg, #fef3c7, #fbbf24)',
+                     'linear-gradient(135deg, #fce7f3, #ec4899)',
+                     'linear-gradient(135deg, #dbeafe, #3b82f6)',
+                     'linear-gradient(135deg, #ede9fe, #a855f7)'];
+  let selectedKidId = null;
+
+  /* ---------- formato ---------- */
+  function relTime(ts) {
+    if (!ts) return '—';
+    const diff = Date.now() - ts;
+    const min = Math.floor(diff / 60000);
+    if (min < 1) return 'hace instantes';
+    if (min < 60) return 'hace ' + min + ' min';
+    const h = Math.floor(min / 60);
+    if (h < 24) return 'hace ' + h + 'h';
+    const d = Math.floor(h / 24);
+    if (d === 1) return 'ayer';
+    if (d < 7) return 'hace ' + d + ' días';
+    return new Date(ts).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+  }
+  function ageFromMs(creadoEn) {
+    if (!creadoEn) return '';
+    const days = Math.floor((Date.now() - creadoEn) / (24*3600*1000));
+    if (days < 1) return 'creado hoy';
+    if (days < 7) return 'hace ' + days + ' días';
+    return 'hace ' + Math.floor(days/7) + ' semanas';
+  }
+  function pctClass(pct) {
+    if (pct === null || pct === undefined) return 'empty';
+    if (pct >= 70) return '';
+    if (pct >= 50) return 'mid';
+    return 'low';
+  }
+
+  /* ---------- top user ---------- */
+  function renderTopUser() {
+    const pro = Auth.getProfesionalActivo();
+    const el = document.getElementById('topUser');
+    if (!pro) {
+      el.innerHTML = '<a href="registro-profesional.html" class="logout">Iniciar sesión</a>';
+      return;
+    }
+    const initials = (pro.nombre || '?').split(' ').slice(0,2).map(s=>s[0]||'').join('').toUpperCase();
+    const profLabel = ({
+      docente: 'Docente', psicologo: 'Psicólogo/a',
+      neurolinguista: 'Neurolingüista', logopeda: 'Logopeda', otro: 'Profesional'
+    })[pro.profesion] || 'Profesional';
+    el.innerHTML = '' +
+      '<div class="me">' +
+        '<strong>' + escapeHtml(pro.nombre || 'Profesional') + '</strong>' +
+        '<small>' + profLabel + (pro.colegiado ? ' · Col. ' + escapeHtml(pro.colegiado) : '') + '</small>' +
+      '</div>' +
+      '<div class="top-avatar">' + initials + '</div>' +
+      '<button type="button" class="logout" id="btnLogout">Salir</button>';
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      Auth.logoutProfesional();
+      window.location.href = 'landing.html';
+    });
+  }
+
+  /* ---------- sidebar ---------- */
+  function renderSidebar() {
+    const pro = Auth.getProfesionalActivo();
+    const list = document.getElementById('kidsList');
+    const count = document.getElementById('kidsCount');
+    if (!pro) {
+      list.innerHTML = '<div style="padding: 12px; color: var(--text-soft); font-size: 0.88rem;">Inicia sesión para ver tus menores vinculados.</div>';
+      count.textContent = '0';
+      return;
+    }
+    const perfiles = Auth.getPerfilesDeProfesional(pro.id);
+    count.textContent = perfiles.length;
+    if (perfiles.length === 0) {
+      list.innerHTML = '<div style="padding: 12px; color: var(--text-soft); font-size: 0.88rem;">Aún no tienes menores vinculados. Usa el botón de abajo o carga datos demo.</div>';
+      return;
+    }
+    if (!selectedKidId || !perfiles.find(p => p.id === selectedKidId)) {
+      selectedKidId = perfiles[0].id;
+    }
+    list.innerHTML = perfiles.map((p, i) => {
+      const resumen = M.getResumen(p.id);
+      const pa = M.getPorActividad(p.id);
+      const completadas = pa.filter(a => a.completadas > 0).length;
+      const pct = Math.round((completadas / 8) * 100);
+      const active = p.id === selectedKidId ? ' active' : '';
+      return '' +
+        '<button class="kid-item' + active + '" data-id="' + p.id + '">' +
+          '<div class="kid-avatar a' + ((i % 4) + 1) + '">' + (p.emoji || '🐻') + '</div>' +
+          '<div class="kid-info">' +
+            '<div class="nm">' + escapeHtml(p.nombre) + '</div>' +
+            '<div class="meta">' + (p.esNino ? 'Niño' : 'Niña') + ' · ' + ageFromMs(p.creadoEn) + '</div>' +
+          '</div>' +
+          '<div class="kid-progress"><div class="pct">' + pct + '%</div><div class="lbl">Progr.</div></div>' +
+        '</button>';
+    }).join('');
+    list.querySelectorAll('.kid-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedKidId = btn.dataset.id;
+        renderSidebar();
+        renderDetail();
+      });
+    });
+  }
+
+  /* ---------- main detail ---------- */
+  function renderDetail() {
+    const main = document.getElementById('main');
+    const pro = Auth.getProfesionalActivo();
+
+    if (!pro) {
+      main.innerHTML = emptyState({
+        icon: '🔐',
+        title: 'Inicia sesión profesional',
+        body: 'Para ver el progreso de los menores vinculados necesitas tener una cuenta profesional activa. También puedes cargar datos de demostración.',
+        ctas: [
+          { label: 'Crear cuenta profesional →', href: 'registro-profesional.html', primary: true },
+          { label: '⚡ Cargar datos demo', id: 'emptyDemo', primary: false }
+        ]
+      });
+      bindEmptyButtons();
+      return;
+    }
+
+    const perfiles = Auth.getPerfilesDeProfesional(pro.id);
+    if (perfiles.length === 0) {
+      main.innerHTML = emptyState({
+        icon: '👥',
+        title: 'Aún no tienes menores vinculados',
+        body: 'Pídele al tutor/a del menor su código de vinculación, o carga datos de demostración para ver cómo funciona el panel.',
+        ctas: [
+          { label: '+ Vincular con código', id: 'emptyLink', primary: true },
+          { label: '⚡ Cargar datos demo', id: 'emptyDemo', primary: false }
+        ]
+      });
+      bindEmptyButtons();
+      return;
+    }
+
+    const perfil = perfiles.find(p => p.id === selectedKidId) || perfiles[0];
+    selectedKidId = perfil.id;
+
+    const idx = perfiles.indexOf(perfil);
+    const resumen = M.getResumen(perfil.id);
+    const porActividad = M.getPorActividad(perfil.id);
+    const serie = M.getSerieTemporal(perfil.id, 14);
+    const eventos = (function() {
+      try { return JSON.parse(localStorage.getItem('reuven.eventos') || '[]').filter(e => e.perfilId === perfil.id); }
+      catch (e) { return []; }
+    })();
+    const ultEvento = eventos.length ? eventos[eventos.length - 1].ts : null;
+    const sesiones = eventos.filter(e => e.tipo === 'task_end').length;
+    const completadasUnicas = porActividad.filter(a => a.completadas > 0).length;
+
+    main.innerHTML = '' +
+      '<div id="detail">' +
+        '<div class="detail-head">' +
+          '<div class="who">' +
+            '<div class="big-avatar" style="background:' + AVATAR_BG[idx % 4] + '">' + (perfil.emoji || '🐻') + '</div>' +
+            '<div>' +
+              '<h1>' + escapeHtml(perfil.nombre) + '</h1>' +
+              '<div class="subtle">' + (perfil.esNino ? 'Niño' : 'Niña') + ' · Última actividad: ' + relTime(ultEvento) + '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div class="actions">' +
+            '<button class="btn btn-light" id="btnExport">📄 Exportar JSON</button>' +
+            '<button class="btn btn-danger" id="btnUnlink" title="Desvincular este menor de tu cuenta">Desvincular</button>' +
+          '</div>' +
+        '</div>' +
+        kpisHtml(completadasUnicas, resumen, sesiones) +
+        lineaAciertoHtml(serie) +
+        barrasDiariasHtml(serie) +
+        barrasActividadHtml(porActividad) +
+        actividadesHtml(porActividad) +
+      '</div>';
+
+    document.getElementById('btnExport').addEventListener('click', () => M.exportJSON(perfil.id));
+    document.getElementById('btnUnlink').addEventListener('click', () => {
+      if (confirm('¿Desvincular a ' + perfil.nombre + ' de tu cuenta? Sus datos no se borran, solo dejas de ver su progreso.')) {
+        Auth.desvincular(pro.id, perfil.id);
+        selectedKidId = null;
+        renderAll();
+      }
+    });
+  }
+
+  function kpisHtml(completadasUnicas, resumen, sesiones) {
+    return '' +
+    '<div class="kpis">' +
+      kpi('var(--green-soft)', 'var(--green-dark)', '✓', 'Tareas con avance', completadasUnicas + ' / 8') +
+      kpi('#fef3c7', '#b45309', '⭐', 'Aciertos / Fallos', resumen.aciertos + ' / ' + resumen.fallidos) +
+      kpi('var(--blue-soft)', '#1d4ed8', '📅', 'Sesiones', sesiones) +
+      kpi('#fce7f3', '#be185d', '⏱', 'Tiempo total', M.formatDuracion(resumen.tiempoMs)) +
+    '</div>';
+  }
+  function kpi(bg, color, ico, lbl, val) {
+    return '' +
+    '<div class="kpi">' +
+      '<div class="lbl"><span class="ico" style="background:' + bg + '; color:' + color + '">' + ico + '</span>' + lbl + '</div>' +
+      '<div class="val">' + val + '</div>' +
+    '</div>';
+  }
+  function actividadesHtml(porActividad) {
+    const rows = porActividad.map((a, i) => {
+      const total = a.aciertos + a.fallidos;
+      const pct = total > 0 ? Math.round((a.aciertos / total) * 100) : null;
+      const fillW = pct === null ? 0 : pct;
+      const cls = pctClass(pct);
+      const meta = total > 0
+        ? a.aciertos + '/' + total + ' · ' + a.sesiones + ' sesión' + (a.sesiones === 1 ? '' : 'es')
+        : 'Sin intentos aún';
+      return '' +
+      '<div class="act-row">' +
+        '<div class="act-icon">' + TASK_ICONS[i] + '</div>' +
+        '<div><div class="act-name">' + (a.taskNum) + '. ' + escapeHtml(a.nombre) + '</div><div class="act-meta">' + meta + '</div></div>' +
+        '<div class="act-bar"><div class="act-bar-fill" style="width:' + fillW + '%"></div></div>' +
+        '<div class="act-pct ' + cls + '">' + (pct === null ? '—' : (pct + '%')) + '</div>' +
+      '</div>';
+    }).join('');
+    return '' +
+    '<div class="card">' +
+      '<div class="card-head"><div><h2>Progreso por actividad</h2><div class="sub">% de aciertos sobre intentos totales</div></div></div>' +
+      '<div class="act-list">' + rows + '</div>' +
+    '</div>';
+  }
+  /* ============== GRÁFICAS SVG ============== */
+
+  /* Línea: tasa de acierto % por día (14 días) */
+  function lineaAciertoHtml(serie) {
+    if (!serie || !serie.length) return '';
+    const W = 760, H = 240, PL = 42, PR = 14, PT = 18, PB = 36;
+    const innerW = W - PL - PR;
+    const innerH = H - PT - PB;
+    const N = serie.length;
+
+    const pts = serie.map(b => {
+      const total = b.aciertos + b.fallidos;
+      return total > 0 ? Math.round((b.aciertos / total) * 100) : null;
+    });
+    const xAt = i => PL + (i / Math.max(1, N - 1)) * innerW;
+    const yAt = v => PT + innerH - (v / 100) * innerH;
+
+    /* Grid horizontal */
+    const grid = [0, 25, 50, 75, 100].map(p => {
+      const y = yAt(p);
+      return '<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="#e5e7eb" stroke-width="1"/>' +
+             '<text x="' + (PL - 6) + '" y="' + (y + 4) + '" text-anchor="end" fill="#9ca3af" font-family="Nunito,sans-serif" font-weight="700" font-size="11">' + p + '%</text>';
+    }).join('');
+
+    /* Polilínea + área bajo la curva */
+    const segs = [];
+    let curr = [];
+    pts.forEach((v, i) => {
+      if (v === null) {
+        if (curr.length) segs.push(curr);
+        curr = [];
+      } else {
+        curr.push({ x: xAt(i), y: yAt(v) });
+      }
+    });
+    if (curr.length) segs.push(curr);
+
+    const lineas = segs.map(s => {
+      const d = s.map((p, i) => (i === 0 ? 'M' : 'L') + p.x + ',' + p.y).join(' ');
+      const area = d + ' L' + s[s.length-1].x + ',' + (PT + innerH) + ' L' + s[0].x + ',' + (PT + innerH) + ' Z';
+      return '<path d="' + area + '" fill="url(#lineFill)" opacity="0.2"/>' +
+             '<path d="' + d + '" fill="none" stroke="url(#lineGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>';
+    }).join('');
+
+    /* Marcadores */
+    const dots = pts.map((v, i) => {
+      if (v === null) return '';
+      const x = xAt(i), y = yAt(v);
+      const isLast = i === N - 1;
+      const r = isLast ? 6 : 4;
+      const fill = isLast ? '#16a34a' : '#c8202d';
+      const date = serie[i].fecha;
+      return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + fill + '" stroke="white" stroke-width="2">' +
+               '<title>' + v + '% el ' + date + '</title>' +
+             '</circle>' +
+             (isLast ? '<text x="' + x + '" y="' + (y - 14) + '" text-anchor="middle" fill="#16a34a" font-family="Nunito" font-weight="800" font-size="13">' + v + '%</text>' : '');
+    }).join('');
+
+    /* Etiquetas X — cada N/7 días para no saturar */
+    const step = Math.max(1, Math.floor(N / 7));
+    const xLabels = serie.map((b, i) => {
+      if (i % step !== 0 && i !== N - 1) return '';
+      const x = xAt(i);
+      const d = new Date(b.fecha + 'T00:00:00');
+      const lbl = i === N - 1 ? 'Hoy' : d.getDate() + '/' + (d.getMonth() + 1);
+      const cls = i === N - 1 ? 'fill="#16a34a" font-weight="800"' : 'fill="#6b7280" font-weight="600"';
+      return '<text x="' + x + '" y="' + (H - PB + 18) + '" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" ' + cls + '>' + lbl + '</text>';
+    }).join('');
+
+    return '' +
+      '<div class="card">' +
+        '<div class="card-head"><div><h2>📈 Tasa de acierto · últimos 14 días</h2><div class="sub">% de respuestas correctas por día (puntos vacíos = sin sesión)</div></div></div>' +
+        '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;max-height:280px;display:block;">' +
+          '<defs>' +
+            '<linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c8202d"/><stop offset="100%" stop-color="#1e3a5f"/></linearGradient>' +
+            '<linearGradient id="lineFill" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#c8202d"/><stop offset="100%" stop-color="white" stop-opacity="0"/></linearGradient>' +
+          '</defs>' +
+          grid + lineas + dots + xLabels +
+        '</svg>' +
+      '</div>';
+  }
+
+  /* Barras apiladas: aciertos (verde) + fallos (rojo) por día */
+  function barrasDiariasHtml(serie) {
+    if (!serie || !serie.length) return '';
+    const W = 760, H = 240, PL = 42, PR = 14, PT = 18, PB = 36;
+    const innerW = W - PL - PR;
+    const innerH = H - PT - PB;
+    const N = serie.length;
+    const max = Math.max(1, ...serie.map(b => b.aciertos + b.fallidos));
+    const slot = innerW / N;
+    const barW = slot * 0.7;
+
+    /* Grid */
+    const grid = [0, 0.25, 0.5, 0.75, 1].map(f => {
+      const y = PT + innerH - f * innerH;
+      const v = Math.round(f * max);
+      return '<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="#e5e7eb" stroke-width="1"/>' +
+             '<text x="' + (PL - 6) + '" y="' + (y + 4) + '" text-anchor="end" fill="#9ca3af" font-family="Nunito" font-weight="700" font-size="11">' + v + '</text>';
+    }).join('');
+
+    /* Barras stack */
+    let bars = '';
+    serie.forEach((b, i) => {
+      const x = PL + i * slot + (slot - barW) / 2;
+      const total = b.aciertos + b.fallidos;
+      const totalH = (total / max) * innerH;
+      const aciH = total > 0 ? (b.aciertos / total) * totalH : 0;
+      const falH = totalH - aciH;
+      const yBase = PT + innerH;
+      if (falH > 0) bars += '<rect x="' + x + '" y="' + (yBase - totalH) + '" width="' + barW + '" height="' + falH + '" fill="#ef4444" rx="2"><title>' + b.fallidos + ' fallos · ' + b.fecha + '</title></rect>';
+      if (aciH > 0) bars += '<rect x="' + x + '" y="' + (yBase - aciH) + '" width="' + barW + '" height="' + aciH + '" fill="#22c55e" rx="2"><title>' + b.aciertos + ' aciertos · ' + b.fecha + '</title></rect>';
+    });
+
+    /* Etiquetas */
+    const step = Math.max(1, Math.floor(N / 7));
+    const xLabels = serie.map((b, i) => {
+      if (i % step !== 0 && i !== N - 1) return '';
+      const x = PL + i * slot + slot / 2;
+      const d = new Date(b.fecha + 'T00:00:00');
+      const lbl = i === N - 1 ? 'Hoy' : d.getDate() + '/' + (d.getMonth() + 1);
+      const cls = i === N - 1 ? 'fill="#16a34a" font-weight="800"' : 'fill="#6b7280" font-weight="600"';
+      return '<text x="' + x + '" y="' + (H - PB + 18) + '" text-anchor="middle" font-family="Fredoka" font-size="11" ' + cls + '>' + lbl + '</text>';
+    }).join('');
+
+    return '' +
+      '<div class="card">' +
+        '<div class="card-head">' +
+          '<div><h2>📊 Aciertos y fallos por día</h2><div class="sub">Últimos 14 días · barras apiladas</div></div>' +
+          chartLegend() +
+        '</div>' +
+        '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;max-height:280px;display:block;">' +
+          grid + bars + xLabels +
+        '</svg>' +
+      '</div>';
+  }
+
+  /* Barras agrupadas por actividad (aciertos vs fallos) */
+  function barrasActividadHtml(porActividad) {
+    if (!porActividad || !porActividad.length) return '';
+    const W = 760, H = 280, PL = 38, PR = 14, PT = 24, PB = 56;
+    const innerW = W - PL - PR;
+    const innerH = H - PT - PB;
+    const N = porActividad.length;
+    const slot = innerW / N;
+    const barW = slot * 0.32;
+    const gap = slot * 0.06;
+    const max = Math.max(1, ...porActividad.map(a => Math.max(a.aciertos, a.fallidos)));
+
+    const grid = [0, 0.25, 0.5, 0.75, 1].map(f => {
+      const y = PT + innerH - f * innerH;
+      const v = Math.round(f * max);
+      return '<line x1="' + PL + '" y1="' + y + '" x2="' + (W - PR) + '" y2="' + y + '" stroke="#e5e7eb" stroke-width="1"/>' +
+             '<text x="' + (PL - 6) + '" y="' + (y + 4) + '" text-anchor="end" fill="#9ca3af" font-family="Nunito" font-weight="700" font-size="11">' + v + '</text>';
+    }).join('');
+
+    let bars = '';
+    porActividad.forEach((a, i) => {
+      const cx = PL + i * slot + slot / 2;
+      const xAci = cx - barW - gap / 2;
+      const xFal = cx + gap / 2;
+      const yBase = PT + innerH;
+      const hAci = (a.aciertos / max) * innerH;
+      const hFal = (a.fallidos / max) * innerH;
+
+      if (hAci > 0) bars += '<rect x="' + xAci + '" y="' + (yBase - hAci) + '" width="' + barW + '" height="' + hAci + '" fill="#22c55e" rx="3"><title>' + a.aciertos + ' aciertos · ' + a.nombre + '</title></rect>';
+      if (hFal > 0) bars += '<rect x="' + xFal + '" y="' + (yBase - hFal) + '" width="' + barW + '" height="' + hFal + '" fill="#ef4444" rx="3"><title>' + a.fallidos + ' fallos · ' + a.nombre + '</title></rect>';
+
+      if (a.aciertos > 0) bars += '<text x="' + (xAci + barW/2) + '" y="' + (yBase - hAci - 4) + '" text-anchor="middle" fill="#16a34a" font-family="Nunito" font-weight="800" font-size="10">' + a.aciertos + '</text>';
+      if (a.fallidos > 0) bars += '<text x="' + (xFal + barW/2) + '" y="' + (yBase - hFal - 4) + '" text-anchor="middle" fill="#dc2626" font-family="Nunito" font-weight="800" font-size="10">' + a.fallidos + '</text>';
+
+      bars += '<text x="' + cx + '" y="' + (H - PB + 18) + '" text-anchor="middle" font-size="14">' + TASK_ICONS[i] + '</text>';
+      bars += '<text x="' + cx + '" y="' + (H - PB + 36) + '" text-anchor="middle" fill="#6b7280" font-family="Fredoka" font-weight="600" font-size="10">' + a.taskNum + '. ' + a.nombre.split(' ')[0] + '</text>';
+    });
+
+    return '' +
+      '<div class="card">' +
+        '<div class="card-head">' +
+          '<div><h2>📊 Aciertos vs fallos por actividad</h2><div class="sub">Comparativa por las 8 actividades</div></div>' +
+          chartLegend() +
+        '</div>' +
+        '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;max-height:340px;display:block;">' +
+          grid + bars +
+        '</svg>' +
+      '</div>';
+  }
+
+  function chartLegend() {
+    return '<div style="display:flex;gap:14px;font-size:0.84rem;color:var(--text-soft);font-weight:600;">' +
+             '<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;background:#22c55e;border-radius:3px;"></span>Aciertos</span>' +
+             '<span style="display:inline-flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;background:#ef4444;border-radius:3px;"></span>Fallos</span>' +
+           '</div>';
+  }
+  function emptyState({ icon, title, body, ctas }) {
+    const buttons = ctas.map(c => {
+      const cls = c.primary ? 'btn btn-primary' : 'btn btn-light';
+      if (c.href) return '<a href="' + c.href + '" class="' + cls + '">' + c.label + '</a>';
+      return '<button type="button" class="' + cls + '" id="' + c.id + '">' + c.label + '</button>';
+    }).join('');
+    return '' +
+    '<div class="empty">' +
+      '<div class="ico">' + icon + '</div>' +
+      '<h2>' + title + '</h2>' +
+      '<p>' + body + '</p>' +
+      '<div class="empty-cta">' + buttons + '</div>' +
+    '</div>';
+  }
+  function bindEmptyButtons() {
+    const ed = document.getElementById('emptyDemo');
+    if (ed) ed.addEventListener('click', loadDemo);
+    const el = document.getElementById('emptyLink');
+    if (el) el.addEventListener('click', openLinkModal);
+  }
+  function escapeHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  /* ---------- demo / reset ---------- */
+  function loadDemo() {
+    const r = Auth.seedDemo();
+    if (r) {
+      selectedKidId = (r.perfiles[0] && r.perfiles[0].id) || null;
+    }
+    renderAll();
+  }
+  function resetTodo() {
+    if (!confirm('Esto borra TODOS los datos locales (perfiles, eventos, profesionales, vínculos). ¿Continuar?')) return;
+    Auth.resetTodo();
+    selectedKidId = null;
+    renderAll();
+  }
+
+  /* ---------- modal vincular ---------- */
+  const modalLink = document.getElementById('modalLink');
+  const linkCodeInput = document.getElementById('linkCode');
+  const linkMsg = document.getElementById('linkMsg');
+
+  function openLinkModal() {
+    if (!Auth.getProfesionalActivo()) {
+      window.location.href = 'registro-profesional.html';
+      return;
+    }
+    linkMsg.className = 'modal-msg';
+    linkMsg.textContent = '';
+    linkCodeInput.value = '';
+    modalLink.classList.add('open');
+    setTimeout(() => linkCodeInput.focus(), 50);
+  }
+  function closeLinkModal() { modalLink.classList.remove('open'); }
+
+  linkCodeInput.addEventListener('input', e => {
+    let v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (v.length > 4) v = v.slice(0, 4) + '-' + v.slice(4, 8);
+    e.target.value = v;
+  });
+  document.getElementById('linkCancel').addEventListener('click', closeLinkModal);
+  modalLink.addEventListener('click', e => { if (e.target === modalLink) closeLinkModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLinkModal(); });
+
+  document.getElementById('linkSave').addEventListener('click', () => {
+    const code = linkCodeInput.value.trim();
+    if (!code) { linkCodeInput.focus(); return; }
+    const pro = Auth.getProfesionalActivo();
+    if (!pro) {
+      linkMsg.className = 'modal-msg error';
+      linkMsg.textContent = 'No hay sesión profesional activa.';
+      return;
+    }
+    const r = Auth.vincularPorCodigo(pro.id, code);
+    if (!r.ok) {
+      linkMsg.className = 'modal-msg error';
+      linkMsg.textContent = r.error;
+      return;
+    }
+    linkMsg.className = 'modal-msg success';
+    linkMsg.textContent = '✓ Menor vinculado.';
+    selectedKidId = r.perfilId;
+    setTimeout(() => { closeLinkModal(); renderAll(); }, 800);
+  });
+
+  /* ---------- bindings ---------- */
+  document.getElementById('btnLink').addEventListener('click', openLinkModal);
+  document.getElementById('btnDemo').addEventListener('click', loadDemo);
+  document.getElementById('btnReset').addEventListener('click', resetTodo);
+
+  function renderAll() {
+    renderTopUser();
+    renderSidebar();
+    renderDetail();
+  }
+
+  /* Auto-seed la primera vez si no hay nada de nada */
+  (function autoSeedIfEmpty() {
+    const haveAny = M.getPerfiles().length > 0 || Auth.getProfesionales().length > 0;
+    if (!haveAny) {
+      // No autoseed para no sorprender. Solo render.
+    }
+    renderAll();
+  })();
+</script>
+
+</body>
+</html>

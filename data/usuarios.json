@@ -1,0 +1,30 @@
+{
+  "_comentario": "Adultos con acceso a metricas. Demo: contraseñas en claro, NO usar en producción.",
+  "usuarios": [
+    {
+      "id": "u_papa",
+      "rol": "tutor",
+      "nombre": "Carlos (papá demo)",
+      "email": "papa@demo.com",
+      "password": "demo123",
+      "estudiantesIds": ["p_liam", "p_ellie"]
+    },
+    {
+      "id": "u_mama",
+      "rol": "tutor",
+      "nombre": "Lucía (mamá demo)",
+      "email": "mama@demo.com",
+      "password": "demo123",
+      "estudiantesIds": ["p_mateo"]
+    },
+    {
+      "id": "u_profe",
+      "rol": "profesional",
+      "nombre": "Marta López",
+      "email": "profe@demo.com",
+      "password": "demo123",
+      "especialidad": "Logopedia",
+      "estudiantesIds": ["p_liam", "p_ellie", "p_mateo", "p_sofia"]
+    }
+  ]
+}
