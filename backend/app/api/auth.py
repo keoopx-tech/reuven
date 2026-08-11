@@ -27,7 +27,7 @@ async def login(req: LoginRequest, db: DbDep, response: Response):
         value=raw_refresh,
         httponly=True,
         secure=settings.is_production,
-        samesite="lax",
+        samesite="none" if settings.is_production else "lax",
         max_age=int(timedelta(days=settings.refresh_token_expire_days).total_seconds()),
         path="/auth/refresh",
     )
@@ -45,7 +45,7 @@ async def refresh(request_obj: Request, db: DbDep, response: Response):
         value=new_raw,
         httponly=True,
         secure=settings.is_production,
-        samesite="lax",
+        samesite="none" if settings.is_production else "lax",
         max_age=int(timedelta(days=settings.refresh_token_expire_days).total_seconds()),
         path="/auth/refresh",
     )
